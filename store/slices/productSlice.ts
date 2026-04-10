@@ -79,9 +79,9 @@ export const createProduct = createAsyncThunk(
 
 export const updateProduct = createAsyncThunk(
   'products/update',
-  async ({ id, data }: { id: string; data: any }, { rejectWithValue }) => {
+  async ({ id, updates }: { id: string; updates: any }, { rejectWithValue }) => {
     try {
-      const response = await productAPI.update(id, data);
+      const response = await productAPI.update(id, updates);
       return response.data.data as Product;
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -128,10 +128,10 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.products = action.payload.data.products;
-        state.total = action.payload.data.total;
-        state.page = action.payload.data.page;
-        state.totalPages = action.payload.data.totalPages;
+        state.products = action.payload?.data?.products || [];
+        state.total = action.payload?.data?.total || 0;
+        state.page = action.payload?.data?.page || 1;
+        state.totalPages = action.payload?.data?.totalPages || 1;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.isLoading = false;

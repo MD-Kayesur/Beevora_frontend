@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { getProfile } from '@/store/slices/authSlice';
 import { TOKEN_KEY } from '@/lib/constants';
+import Cookies from 'js-cookie';
 
 export default function StoreInitializer({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
@@ -10,9 +11,9 @@ export default function StoreInitializer({ children }: { children: React.ReactNo
 
   useEffect(() => {
     // If we have a token but aren't authenticated in state, fetch the profile
-    const localToken = typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null;
+    const cookieToken = Cookies.get(TOKEN_KEY);
     
-    if ((token || localToken) && !isAuthenticated) {
+    if ((token || cookieToken) && !isAuthenticated) {
       dispatch(getProfile());
     }
   }, [dispatch, token, isAuthenticated]);

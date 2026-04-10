@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { API_BASE_URL, TOKEN_KEY } from './constants';
+import Cookies from 'js-cookie';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -12,11 +13,9 @@ const api = axios.create({
 // Request interceptor — attach auth token
 api.interceptors.request.use(
   (config) => {
-    if (typeof window !== 'undefined') {
-      const token = localStorage.getItem(TOKEN_KEY);
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+    const token = Cookies.get(TOKEN_KEY);
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
@@ -28,8 +27,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
+      Cookies.remove(TOKEN_KEY);
       if (typeof window !== 'undefined') {
-        localStorage.removeItem(TOKEN_KEY);
         window.location.href = '/auth/login';
       }
     }

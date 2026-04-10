@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { User, LoginCredentials, RegisterCredentials } from '@/types/user';
 import { authAPI, userAPI } from '@/lib/api';
 import { TOKEN_KEY, USER_KEY } from '@/lib/constants';
+import Cookies from 'js-cookie';
 
 interface AuthState {
   user: User | null;
@@ -15,7 +16,7 @@ interface AuthState {
 const initialState: AuthState = {
   user: null,
   mockUsers: [],
-  token: typeof window !== 'undefined' ? localStorage.getItem(TOKEN_KEY) : null,
+  token: Cookies.get(TOKEN_KEY) || null,
   isAuthenticated: false,
   isLoading: false,
   error: null,
@@ -98,8 +99,8 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
+      Cookies.remove(TOKEN_KEY);
       if (typeof window !== 'undefined') {
-        localStorage.removeItem(TOKEN_KEY);
         localStorage.removeItem(USER_KEY);
       }
     },
@@ -122,8 +123,11 @@ const authSlice = createSlice({
         state.user = action.payload.data.user;
         state.token = action.payload.data.accessToken;
         state.isAuthenticated = true;
+        
+        // Set cookies with a 7-day expiration (customizable)
+        Cookies.set(TOKEN_KEY, action.payload.data.accessToken, { expires: 7 });
+        
         if (typeof window !== 'undefined') {
-          localStorage.setItem(TOKEN_KEY, action.payload.data.accessToken);
           localStorage.setItem(USER_KEY, JSON.stringify(action.payload.data.user));
         }
       })
