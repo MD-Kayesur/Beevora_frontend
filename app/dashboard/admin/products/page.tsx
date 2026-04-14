@@ -145,7 +145,7 @@ export default function AdminProductsPage() {
                 </tr>
               ) : (
                 filteredProducts.map((product) => (
-                  <tr key={product.id} className="hover:bg-white/[0.02] transition-colors group">
+                  <tr key={product?.id} className="hover:bg-white/[0.02] transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white/5 border border-white/10 flex-shrink-0">
@@ -155,9 +155,9 @@ export default function AdminProductsPage() {
                           <p className="font-bold text-white truncate max-w-[220px] group-hover:text-amber-400 transition-colors uppercase tracking-tight">
                             {product.name}
                           </p>
-                          <p className="text-[10px] text-white/20 font-mono mt-0.5 tracking-tighter">
+                          {/* <p className="text-[10px] text-white/20 font-mono mt-0.5 tracking-tighter">
                             ID: {product.id.split('-').pop()?.toUpperCase()} • {product.brand}
-                          </p>
+                          </p> */}
                         </div>
                       </div>
                     </td>

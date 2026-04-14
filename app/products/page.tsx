@@ -15,18 +15,26 @@ export default function ProductsPage() {
     products, 
     isLoading, 
     error, 
-    filters, 
-    loadProducts, 
-    updateFilters, 
-    resetFilters 
+    params: filters, 
+    setParams, 
+    refetch: loadProducts
   } = useProducts();
 
-  const [searchQuery, setSearchQuery] = useState(filters.search || '');
+  const updateFilters = (newFilters: any) => {
+    setParams({ ...filters, ...newFilters });
+  };
+
+  const resetFilters = () => {
+    setParams({});
+  };
+
+  const [searchQuery, setSearchQuery] = useState(filters?.search || '');
   const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => {
-    loadProducts(filters);
-  }, [filters, loadProducts]);
+  // Redundant with RTK Query automate-fetch
+  // useEffect(() => {
+  //   loadProducts(filters);
+  // }, [filters, loadProducts]);
 
   const handleSearchChange = useMemo(
     () => debounce((value: string) => {
@@ -77,7 +85,7 @@ export default function ProductsPage() {
         </Button>
         <div className="relative">
           <select
-            value={filters.sortBy || 'newest'}
+            value={filters?.sortBy || 'newest'}
             onChange={onSortChange}
             className="appearance-none h-full bg-white/5 border border-white/10 text-white text-sm rounded-lg px-4 py-2.5 pr-9 focus:outline-none focus:ring-2 focus:ring-amber-500/50 cursor-pointer"
           >
@@ -119,18 +127,18 @@ export default function ProductsPage() {
       )}
 
       {/* Active Filters */}
-      {(filters.category || filters.search) && (
+      {(filters?.category || filters?.search) && (
         <div className="flex items-center gap-2 mb-5 flex-wrap">
           <span className="text-sm text-white/40">Active filters:</span>
-          {filters.category && (
+          {filters?.category && (
             <Badge variant="primary">
-              {filters.category}
+              {filters?.category}
               <button onClick={clearCategory}><X className="h-3 w-3 ml-1" /></button>
             </Badge>
           )}
-          {filters.search && (
+          {filters?.search && (
             <Badge variant="default">
-              &quot;{filters.search}&quot;
+              &quot;{filters?.search}&quot;
               <button onClick={() => { updateFilters({ search: undefined }); setSearchQuery(''); }}><X className="h-3 w-3 ml-1" /></button>
             </Badge>
           )}
@@ -138,16 +146,16 @@ export default function ProductsPage() {
       )}
 
       {/* Product Feed */}
-      {isLoading && products.length === 0 ? (
+      {isLoading && products?.length === 0 ? (
         <div className="flex justify-center py-20">
           <Spinner size="lg" />
         </div>
-      ) : error && products.length === 0 ? (
+      ) : error && products?.length === 0 ? (
         <div className="text-center py-20 p-8 rounded-2xl bg-red-500/5 border border-red-500/10">
           <p className="text-red-400 font-medium mb-4">{error}</p>
           <Button onClick={() => loadProducts(filters)}>Try Again</Button>
         </div>
-      ) : products.length === 0 ? (
+      ) : products?.length === 0 ? (
         <div className="text-center py-20">
           <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
             <Package className="h-8 w-8 text-white/20" />

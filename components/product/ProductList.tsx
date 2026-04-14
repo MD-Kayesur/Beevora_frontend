@@ -14,7 +14,8 @@ export const ProductList = ({ products, isLoading, emptyMessage = 'No products f
     return <PageSpinner label="Loading products..." />;
   }
 
-  if (products.length === 0) {
+  if (products?.length === 0) {
+    
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
         <PackageX className="h-16 w-16 text-white/20" />
@@ -22,11 +23,11 @@ export const ProductList = ({ products, isLoading, emptyMessage = 'No products f
       </div>
     );
   }
-
+console.log(products)
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
+      {products?.map((product,inx) => (
+        <ProductCard key={inx} product={product} />
       ))}
     </div>
   );
