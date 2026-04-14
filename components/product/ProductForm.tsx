@@ -40,10 +40,12 @@ export const ProductForm = ({ initialData, onSubmit, isLoading }: ProductFormPro
       return;
     }
 
-    const payload = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      payload.append(key, value);
-    });
+    const payload = {
+      ...formData,
+      price: Number(formData.price),
+      originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
+      stock: Number(formData.stock),
+    };
 
     onSubmit(payload);
   };

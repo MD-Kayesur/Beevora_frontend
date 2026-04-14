@@ -3,17 +3,12 @@ import { formatDate, formatPrice } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { ORDER_STATUS_COLORS } from '@/lib/constants';
 import { Eye } from 'lucide-react';
-import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
-import { useEffect } from 'react';
-import { fetchMyOrders } from '@/store/slices/orderSlice';
-
+import { useGetMyOrdersQuery } from '@/redux/features/order/orderApi';
+ 
 export default function UserOrdersPage() {
-  const { orders, total } = useAppSelector((state) => state.orders);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(fetchMyOrders());
-  }, [dispatch]);
+  const { data } = useGetMyOrdersQuery({});
+  const orders = data?.data || [];
+  const total = data?.meta?.total || 0;
 
   return (
     <div className="space-y-6">
