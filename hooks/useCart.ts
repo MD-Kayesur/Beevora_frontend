@@ -32,13 +32,17 @@ export const useCart = () => {
     discount,
     isOpen,
     isLoading,
-    addItem: (productId: string, quantity: number = 1) => addToCart({ productId, quantity }),
+    addItem: (product: any, quantity: number = 1) => {
+      const productId = typeof product === 'string' ? product : product.id || product._id;
+      return addToCart({ productId, quantity });
+    },
     removeItem: (itemId: string) => removeFromCart(itemId),
     updateQuantity: (itemId: string, quantity: number) => updateQuantity({ itemId, quantity }),
     clearCart: () => clearCartMutation(),
     toggleCart: () => dispatch(toggleCart()),
     closeCart: () => dispatch(closeCart()),
     applyCoupon: (code: string) => applyCouponMutation(code),
-    isInCart: (productId: string) => items.some((item: any) => item.product.id === productId),
+    isInCart: (productId: string) => items.some((item: any) => (item.product.id || item.product._id) === productId),
+    getItemQuantity: (productId: string) => items.find((item: any) => (item.product.id || item.product._id) === productId)?.quantity || 0,
   };
 };
