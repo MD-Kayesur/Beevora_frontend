@@ -24,14 +24,22 @@ export const useCart = () => {
   const total = cartData?.data?.total || 0;
   const subtotal = cartData?.data?.subtotal || 0;
   const discount = cartData?.data?.discount || 0;
+  const couponCode = cartData?.data?.coupon || '';
 
   return {
     items,
     total,
     subtotal,
     discount,
+    couponCode,
     isOpen,
     isLoading,
+    itemCount: items.reduce((acc: number, item: any) => acc + item.quantity, 0),
+    summary: {
+      total,
+      discount,
+      subtotal,
+    },
     addItem: (product: any, quantity: number = 1) => {
       const productId = typeof product === 'string' ? product : product.id || product._id;
       return addToCart({ productId, quantity });

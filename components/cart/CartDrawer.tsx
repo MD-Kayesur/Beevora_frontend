@@ -54,8 +54,8 @@ export const CartDrawer = () => {
               <Button onClick={toggleCart} size="sm">Browse Products</Button>
             </div>
           ) : (
-            items.map((item) => (
-              <div key={item.id} className="flex gap-4 p-3 rounded-xl bg-white/3 border border-white/5 hover:border-white/10 transition-all">
+            items.map((item: any) => (
+              <div key={item._id} className="flex gap-4 p-3 rounded-xl bg-white/3 border border-white/5 hover:border-white/10 transition-all">
                 <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
                   <Image src={item.product.thumbnail} alt={item.product.name} fill className="object-cover" />
                 </div>
@@ -65,12 +65,12 @@ export const CartDrawer = () => {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                        <button 
-                        onClick={() => updateQuantity(item.product.id, Math.max(1, item.quantity - 1))}
+                        onClick={() => updateQuantity(item._id, Math.max(1, item.quantity - 1))}
                         className="w-6 h-6 rounded-md bg-white/5 border border-white/10 text-white/60 flex items-center justify-center hover:bg-white/10 transition-all text-xs"
                        >-</button>
                        <span className="text-xs font-bold text-white w-4 text-center">{item.quantity}</span>
                        <button 
-                        onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item._id, item.quantity + 1)}
                         className="w-6 h-6 rounded-md bg-white/5 border border-white/10 text-white/60 flex items-center justify-center hover:bg-white/10 transition-all text-xs"
                        >+</button>
                     </div>
@@ -78,7 +78,7 @@ export const CartDrawer = () => {
                   </div>
                 </div>
                 <button 
-                  onClick={() => removeItem(item.product.id)}
+                  onClick={() => removeItem(item._id)}
                   className="p-1 text-white/20 hover:text-red-400 transition-colors self-start"
                 >
                   <Trash2 className="h-4 w-4" />
