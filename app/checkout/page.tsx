@@ -1,25 +1,74 @@
 'use client';
 import { useState } from 'react';
-import { CreditCard, MapPin, CheckCircle } from 'lucide-react';
+import { CreditCard, MapPin, CheckCircle, Loader2 } from 'lucide-react';
 import { CartSummary } from '@/components/cart/CartSummary';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
+import { useCreateOrderMutation } from '@/redux/features/order/orderApi';
 import Link from 'next/link';
 import { ROUTES } from '@/lib/constants';
+import { formatPrice } from '@/lib/utils';
+import { toast } from 'react-hot-toast';
 
 type Step = 'shipping' | 'payment' | 'confirmation';
 
 export default function CheckoutPage() {
   const [step, setStep] = useState<Step>('shipping');
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'paypal' | 'cash_on_delivery'>('card');
-  const { items } = useCart();
+  const { items, summary, clearCart } = useCart();
   const { isAuthenticated } = useAuth();
+  const [createOrder, { isLoading: isPlacingOrder }] = useCreateOrderMutation();
 
   const [shippingData, setShippingData] = useState({
     fullName: '', phone: '', street: '', city: '', state: '', zipCode: '', country: '',
   });
+
+  const handleSubmit = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please login to place an order');
+      return;
+    }
+
+    try {
+      // Concatenate fields into a single string as required by the backend
+      const addressString = `${shippingData.street}, City: ${shippingData.city}, Phone: ${shippingData.phone}`;
+
+      const orderPayload = {
+        items: items.map(item => ({
+          product: item.product.id || item.product._id,
+          quantity: item.quantity,
+          price: item.product.price
+        })),
+        totalAmount: summary.total,
+        shippingAddress: addressString,
+        paymentStatus: paymentMethod === 'cash_on_delivery' ? 'pending' : 'paid'
+      };
+
+      const response = await createOrder(orderPayload).unwrap();
+      
+      if (response.success) {
+        toast.success('Order placed successfully!');
+        
+        // Generate WhatsApp Link
+        const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801928294516';
+        const itemLine = items.map(item => `- ${item.product.name} (x${item.quantity})`).join('%0A');
+        const message = `Hello Beevora! I just placed an order.%0A%0A*Order Details:*%0AOrder ID: ${response.data._id}%0AItems:%0A${itemLine}%0A%0A*Total:* ${formatPrice(summary.total)}%0A%0A*Address:* %0A${addressString}`;
+        
+        const waLink = `https://wa.me/${waNumber}?text=${message}`;
+        
+        // Clear Cart
+        await clearCart();
+        
+        // Open WhatsApp and set step to confirmation
+        window.open(waLink, '_blank');
+        setStep('confirmation');
+      }
+    } catch (error: any) {
+      toast.error(error?.data?.message || 'Failed to place order');
+    }
+  };
 
   if (items.length === 0 && step !== 'confirmation') {
     return (
@@ -73,13 +122,13 @@ export default function CheckoutPage() {
                 <h2 className="text-lg font-bold text-white">Shipping Address</h2>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Input label="Full Name" value={shippingData.fullName} onChange={(e) => setShippingData(p => ({...p, fullName: e.target.value}))} placeholder="John Doe" />
-                <Input label="Phone" value={shippingData.phone} onChange={(e) => setShippingData(p => ({...p, phone: e.target.value}))} placeholder="+1 234 567 8900" />
-                <Input label="Street Address" value={shippingData.street} onChange={(e) => setShippingData(p => ({...p, street: e.target.value}))} placeholder="123 Main St" className="sm:col-span-2" />
-                <Input label="City" value={shippingData.city} onChange={(e) => setShippingData(p => ({...p, city: e.target.value}))} placeholder="New York" />
-                <Input label="State" value={shippingData.state} onChange={(e) => setShippingData(p => ({...p, state: e.target.value}))} placeholder="NY" />
-                <Input label="ZIP Code" value={shippingData.zipCode} onChange={(e) => setShippingData(p => ({...p, zipCode: e.target.value}))} placeholder="10001" />
-                <Input label="Country" value={shippingData.country} onChange={(e) => setShippingData(p => ({...p, country: e.target.value}))} placeholder="United States" />
+                <Input label="Full Name" value={shippingData.fullName} onChange={(e) => setShippingData(p => ({ ...p, fullName: e.target.value }))} placeholder="John Doe" />
+                <Input label="Phone" value={shippingData.phone} onChange={(e) => setShippingData(p => ({ ...p, phone: e.target.value }))} placeholder="+1 234 567 8900" />
+                <Input label="Street Address" value={shippingData.street} onChange={(e) => setShippingData(p => ({ ...p, street: e.target.value }))} placeholder="123 Main St" className="sm:col-span-2" />
+                <Input label="City" value={shippingData.city} onChange={(e) => setShippingData(p => ({ ...p, city: e.target.value }))} placeholder="New York" />
+                <Input label="State" value={shippingData.state} onChange={(e) => setShippingData(p => ({ ...p, state: e.target.value }))} placeholder="NY" />
+                <Input label="ZIP Code" value={shippingData.zipCode} onChange={(e) => setShippingData(p => ({ ...p, zipCode: e.target.value }))} placeholder="10001" />
+                <Input label="Country" value={shippingData.country} onChange={(e) => setShippingData(p => ({ ...p, country: e.target.value }))} placeholder="United States" />
               </div>
               <Button className="w-full mt-4" size="lg" onClick={() => setStep('payment')}>
                 Continue to Payment
@@ -119,8 +168,16 @@ export default function CheckoutPage() {
                 </div>
               )}
               <div className="flex gap-3 mt-4">
-                <Button variant="secondary" className="flex-1" onClick={() => setStep('shipping')}>Back</Button>
-                <Button className="flex-1" size="lg" onClick={() => setStep('confirmation')}>Place Order</Button>
+                <Button variant="secondary" className="flex-1" onClick={() => setStep('shipping')} disabled={isPlacingOrder}>Back</Button>
+                <Button 
+                  className="flex-1" 
+                  size="lg" 
+                  onClick={handleSubmit} 
+                  disabled={isPlacingOrder || items.length === 0}
+                  leftIcon={isPlacingOrder ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                >
+                  {isPlacingOrder ? 'Processing...' : 'Place Order'}
+                </Button>
               </div>
             </>
           )}
