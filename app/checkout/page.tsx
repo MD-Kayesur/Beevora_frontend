@@ -53,7 +53,7 @@ export default function CheckoutPage() {
         
         // Generate WhatsApp Link
         const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801928294516';
-        const itemLine = items.map(item => `- ${item.product.name} (x${item.quantity})`).join('%0A');
+        const itemLine = items.map((item: any) => `- ${item.product.name} (x${item.quantity})`).join('%0A');
         const message = `Hello Beevora! I just placed an order.%0A%0A*Order Details:*%0AOrder ID: ${response.data._id}%0AItems:%0A${itemLine}%0A%0A*Total:* ${formatPrice(summary.total)}%0A%0A*Address:* %0A${addressString}`;
         
         const waLink = `https://wa.me/${waNumber}?text=${message}`;

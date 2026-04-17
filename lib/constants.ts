@@ -33,6 +33,7 @@ export const PRODUCT_CATEGORIES = [
   'Beauty & Health',
   'Automotive',
   'Toys & Games',
+  'Honey',
 ] as const;
 
 export const SORT_OPTIONS = [
