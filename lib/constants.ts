@@ -26,7 +26,7 @@ export const ROUTES = {
 
 export const PRODUCT_CATEGORIES = [
   'Electronics',
-  'Clothing & Fashion',
+  'Clothing',
   'Home & Garden',
   'Sports & Outdoors',
   'Books & Media',

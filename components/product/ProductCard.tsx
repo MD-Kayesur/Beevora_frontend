@@ -14,7 +14,6 @@ interface ProductCardProps {
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
-  console.log(product)
   const { addItem, isInCart } = useCart();
   const inCart = isInCart(product.id);
   const discount = product.originalPrice ? calculateDiscount(product.originalPrice, product.price) : null;
