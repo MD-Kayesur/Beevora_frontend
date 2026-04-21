@@ -1,9 +1,10 @@
 'use client';
 import { useState } from 'react';
-import { CreditCard, MapPin, CheckCircle, Loader2 } from 'lucide-react';
+import { CreditCard, MapPin, CheckCircle, Loader2, MessageCircle, Send, MessageSquare, Phone } from 'lucide-react';
 import { CartSummary } from '@/components/cart/CartSummary';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreateOrderMutation } from '@/redux/features/order/orderApi';
@@ -23,6 +24,14 @@ export default function CheckoutPage() {
 
   const [shippingData, setShippingData] = useState({
     fullName: '', phone: '', street: '', city: '', state: '', zipCode: '', country: '',
+  });
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [contactLinks, setContactLinks] = useState({
+    whatsapp: '',
+    telegram: '',
+    messenger: '',
+    call: ''
   });
 
   const handleSubmit = async () => {
@@ -51,18 +60,27 @@ export default function CheckoutPage() {
       if (response.success) {
         toast.success('Order placed successfully!');
         
-        // Generate WhatsApp Link
+        // Generate Contact Links
         const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801928294516';
+        const tgUsername = process.env.NEXT_PUBLIC_TELEGRAM_USERNAME || 'beevora';
+        const fbPage = process.env.NEXT_PUBLIC_MESSENGER_PAGE || 'beevora';
+        const phone = process.env.NEXT_PUBLIC_PHONE_NUMBER || '+8801928294516';
+
         const itemLine = items.map((item: any) => `- ${item.product.name} (x${item.quantity})`).join('%0A');
-        const message = `Hello Beevora! I just placed an order.%0A%0A*Order Details:*%0AOrder ID: ${response.data._id}%0AItems:%0A${itemLine}%0A%0A*Total:* ${formatPrice(summary.total)}%0A%0A*Address:* %0A${addressString}`;
+        const messageText = `Hello Beevora! I just placed an order.%0A%0A*Order Details:*%0AOrder ID: ${response.data._id}%0AItems:%0A${itemLine}%0A%0A*Total:* ${formatPrice(summary.total)}%0A%0A*Address:* %0A${addressString}`;
         
-        const waLink = `https://wa.me/${waNumber}?text=${message}`;
-        
+        setContactLinks({
+          whatsapp: `https://wa.me/${waNumber}?text=${messageText}`,
+          telegram: `https://t.me/${tgUsername}?text=${messageText}`,
+          messenger: `https://m.me/${fbPage}`,
+          call: `tel:${phone}`
+        });
+
         // Clear Cart
         await clearCart();
         
-        // Open WhatsApp and set step to confirmation
-        window.open(waLink, '_blank');
+        // Show contact modal and set confirmation step
+        setIsModalOpen(true);
         setStep('confirmation');
       }
     } catch (error: any) {
@@ -87,10 +105,60 @@ export default function CheckoutPage() {
         </div>
         <h1 className="text-3xl font-bold text-white mb-3">Order Placed!</h1>
         <p className="text-white/50 mb-8">Thank you for your purchase. You will receive a confirmation email shortly.</p>
-        <div className="flex gap-3 justify-center">
+        <div className="flex gap-3 justify-center mb-8">
           <Link href={ROUTES.USER_ORDERS}><Button variant="secondary">View Orders</Button></Link>
           <Link href={ROUTES.PRODUCTS}><Button>Continue Shopping</Button></Link>
         </div>
+        
+        <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+          <h3 className="text-lg font-bold text-white mb-4">Need Help with your Order?</h3>
+          <p className="text-white/50 mb-6 text-sm">Send us a message on your preferred platform to confirm your order instantly.</p>
+          <Button onClick={() => setIsModalOpen(true)} className="w-full">
+            Contact Support
+          </Button>
+        </div>
+
+        <Modal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)}
+          title="Send Order Details"
+        >
+          <div className="space-y-4">
+            <p className="text-white/70 text-sm mb-4">
+              Choose a platform to send your order details for faster processing:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Button 
+                onClick={() => window.open(contactLinks.whatsapp, '_blank')}
+                className="w-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center gap-2 border-none"
+              >
+                <MessageCircle className="h-5 w-5" />
+                WhatsApp
+              </Button>
+              <Button 
+                onClick={() => window.open(contactLinks.telegram, '_blank')}
+                className="w-full bg-[#0088cc] hover:bg-[#0077b5] text-white flex items-center justify-center gap-2 border-none"
+              >
+                <Send className="h-5 w-5" />
+                Telegram
+              </Button>
+              <Button 
+                onClick={() => window.open(contactLinks.messenger, '_blank')}
+                className="w-full bg-[#0084FF] hover:bg-[#0074e0] text-white flex items-center justify-center gap-2 border-none"
+              >
+                <MessageSquare className="h-5 w-5" />
+                Messenger
+              </Button>
+              <Button 
+                onClick={() => window.location.href = contactLinks.call}
+                className="w-full bg-amber-600 hover:bg-amber-700 text-white flex items-center justify-center gap-2 border-none"
+              >
+                <Phone className="h-5 w-5" />
+                Call Us
+              </Button>
+            </div>
+          </div>
+        </Modal>
       </div>
     );
   }
