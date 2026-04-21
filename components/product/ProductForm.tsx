@@ -22,6 +22,8 @@ export const ProductForm = ({ initialData, onSubmit, isLoading }: ProductFormPro
     description: initialData?.description || '',
     thumbnail: initialData?.thumbnail || '',
     sku: initialData?.sku || `BEE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+    isActive: initialData?.isActive !== undefined ? initialData.isActive : true,
+    isFeatured: initialData?.isFeatured !== undefined ? initialData.isFeatured : false,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -38,10 +40,12 @@ export const ProductForm = ({ initialData, onSubmit, isLoading }: ProductFormPro
       return;
     }
 
-    const payload = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      payload.append(key, value);
-    });
+    const payload = {
+      ...formData,
+      price: Number(formData.price),
+      originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
+      stock: Number(formData.stock),
+    };
 
     onSubmit(payload);
   };
@@ -134,6 +138,29 @@ export const ProductForm = ({ initialData, onSubmit, isLoading }: ProductFormPro
           className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500/50 transition-colors resize-none"
           placeholder="Describe the product..."
         />
+      </div>
+
+      <div className="flex gap-6 py-2 px-1">
+        <label className="flex items-center gap-2 cursor-pointer group">
+          <input
+            type="checkbox"
+            name="isActive"
+            checked={formData.isActive}
+            onChange={(e) => setFormData(prev => ({ ...prev, isActive: e.target.checked }))}
+            className="w-4 h-4 rounded border-white/10 bg-white/5 text-amber-500 focus:ring-amber-500/50 transition-all cursor-pointer"
+          />
+          <span className="text-sm text-white/70 group-hover:text-white transition-colors">Visible in Store</span>
+        </label>
+        <label className="flex items-center gap-2 cursor-pointer group">
+          <input
+            type="checkbox"
+            name="isFeatured"
+            checked={formData.isFeatured}
+            onChange={(e) => setFormData(prev => ({ ...prev, isFeatured: e.target.checked }))}
+            className="w-4 h-4 rounded border-white/10 bg-white/5 text-amber-500 focus:ring-amber-500/50 transition-all cursor-pointer"
+          />
+          <span className="text-sm text-white/70 group-hover:text-white transition-colors">Featured Product</span>
+        </label>
       </div>
 
       <Input

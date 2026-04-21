@@ -4,12 +4,12 @@ import { User, Mail, Phone, MapPin, Save } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { getInitials } from '@/lib/utils';
-import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
-import { updateProfile } from '@/store/slices/authSlice';
+import { useAppSelector } from '@/hooks/useRedux';
+import { useUpdateProfileMutation } from '@/redux/features/auth/authApi';
 
 export default function UserProfilePage() {
   const { user } = useAppSelector((state) => state.auth);
-  const dispatch = useAppDispatch();
+  const [updateProfileMutation] = useUpdateProfileMutation();
   const [isSaving, setIsSaving] = useState(false);
   const [profile, setProfile] = useState({
     name: user?.name || '',
@@ -29,9 +29,14 @@ export default function UserProfilePage() {
   }, [user]);
 
   const handleSave = async () => {
-    setIsSaving(true);
-    await dispatch(updateProfile(profile));
-    setIsSaving(false);
+    try {
+      setIsSaving(true);
+      await updateProfileMutation(profile).unwrap();
+    } catch (error) {
+      console.error('Failed to update profile', error);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleChange = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) => {

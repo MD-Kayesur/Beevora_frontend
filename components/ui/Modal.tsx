@@ -43,14 +43,14 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md', className
     >
       <div
         className={cn(
-          'w-full rounded-2xl bg-[#0D1428] border border-white/10 shadow-2xl',
+          'relative w-full rounded-2xl bg-[#0D1428] border border-white/10 shadow-2xl flex flex-col max-h-[calc(100vh-32px)]',
           'animate-in slide-in-from-bottom-4 duration-300',
           sizes[size],
           className
         )}
       >
         {title && (
-          <div className="flex items-center justify-between p-5 border-b border-white/10">
+          <div className="flex-shrink-0 flex items-center justify-between p-5 border-b border-white/10">
             <h3 className="text-lg font-bold text-white">{title}</h3>
             <button
               onClick={onClose}
@@ -60,7 +60,7 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md', className
             </button>
           </div>
         )}
-        <div className="p-5">{children}</div>
+        <div className="p-5 overflow-y-auto custom-scrollbar">{children}</div>
       </div>
     </div>
   );

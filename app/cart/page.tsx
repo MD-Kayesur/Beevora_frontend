@@ -49,8 +49,8 @@ export default function CartPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
         {/* Cart Items */}
         <div className="bg-[#0D1428] border border-white/10 rounded-2xl p-5 h-fit">
-          {items.map((item) => (
-            <CartItem key={item.id} item={item} />
+          {items?.map((item: any) => (
+            <CartItem key={item?.id} item={item} />
           ))}
 
           <div className="mt-5 pt-4 border-t border-white/10">

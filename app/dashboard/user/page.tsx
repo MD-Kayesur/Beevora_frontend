@@ -7,17 +7,12 @@ import { Button } from '@/components/ui/Button';
 import { formatDate, formatPrice } from '@/lib/utils';
 import Link from 'next/link';
 import { ROUTES, ORDER_STATUS_COLORS } from '@/lib/constants';
-import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
-import { useEffect } from 'react';
-import { fetchMyOrders } from '@/store/slices/orderSlice';
-
+import { useGetMyOrdersQuery } from '@/redux/features/order/orderApi';
+ 
 export default function UserDashboardPage() {
-  const { orders, total, isLoading } = useAppSelector((state) => state.orders);
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(fetchMyOrders());
-  }, [dispatch]);
+  const { data, isLoading } = useGetMyOrdersQuery({});
+  const orders = data?.data || [];
+  const total = data?.meta?.total || 0;
 
   const totalSpent = orders.reduce((acc, order) => acc + (order.total || 0), 0);
   const inProgress = orders.filter((o) => ['pending', 'processing', 'shipped'].includes(o.status)).length;

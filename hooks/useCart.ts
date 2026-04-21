@@ -1,74 +1,56 @@
 import { useAppDispatch, useAppSelector } from './useRedux';
-import { addItem, removeItem, updateQuantity, clearCart, toggleCart, closeCart, applyCoupon, removeCoupon } from '@/store/slices/cartSlice';
-import { selectCartItems, selectCartItemCount, selectCartSubtotal, selectCartTotal, selectCartSummary } from '@/store/slices/cartSlice';
-import { Product } from '@/types/product';
+import { toggleCart, closeCart } from '@/redux/features/cart/cartSlice';
+import { 
+  useGetCartQuery, 
+  useAddToCartMutation, 
+  useRemoveFromCartMutation, 
+  useUpdateCartItemMutation, 
+  useClearCartMutation,
+  useApplyCouponMutation 
+} from '@/redux/features/cart/cartApi';
 
 export const useCart = () => {
   const dispatch = useAppDispatch();
-  const items = useAppSelector(selectCartItems);
-  const itemCount = useAppSelector(selectCartItemCount);
-  const subtotal = useAppSelector(selectCartSubtotal);
-  const total = useAppSelector(selectCartTotal);
-  const summary = useAppSelector(selectCartSummary);
   const isOpen = useAppSelector((state) => state.cart.isOpen);
-  const couponCode = useAppSelector((state) => state.cart.couponCode);
+  
+  const { data: cartData, isLoading } = useGetCartQuery();
+  const [addToCart] = useAddToCartMutation();
+  const [removeFromCart] = useRemoveFromCartMutation();
+  const [updateQuantity] = useUpdateCartItemMutation();
+  const [clearCartMutation] = useClearCartMutation();
+  const [applyCouponMutation] = useApplyCouponMutation();
 
-  const handleAddItem = (product: Product, quantity = 1) => {
-    dispatch(addItem({ product, quantity }));
-  };
-
-  const handleRemoveItem = (productId: string) => {
-    dispatch(removeItem(productId));
-  };
-
-  const handleUpdateQuantity = (productId: string, quantity: number) => {
-    dispatch(updateQuantity({ productId, quantity }));
-  };
-
-  const handleClearCart = () => {
-    dispatch(clearCart());
-  };
-
-  const handleToggleCart = () => {
-    dispatch(toggleCart());
-  };
-
-  const handleCloseCart = () => {
-    dispatch(closeCart());
-  };
-
-  const handleApplyCoupon = (code: string) => {
-    dispatch(applyCoupon(code));
-  };
-
-  const handleRemoveCoupon = () => {
-    dispatch(removeCoupon());
-  };
-
-  const isInCart = (productId: string) => items.some((item) => item.product.id === productId);
-
-  const getItemQuantity = (productId: string) => {
-    const item = items.find((i) => i.product.id === productId);
-    return item?.quantity || 0;
-  };
+  const items = cartData?.data?.items || [];
+  const total = cartData?.data?.total || 0;
+  const subtotal = cartData?.data?.subtotal || 0;
+  const discount = cartData?.data?.discount || 0;
+  const couponCode = cartData?.data?.coupon || '';
 
   return {
     items,
-    itemCount,
-    subtotal,
     total,
-    summary,
-    isOpen,
+    subtotal,
+    discount,
     couponCode,
-    addItem: handleAddItem,
-    removeItem: handleRemoveItem,
-    updateQuantity: handleUpdateQuantity,
-    clearCart: handleClearCart,
-    toggleCart: handleToggleCart,
-    closeCart: handleCloseCart,
-    applyCoupon: handleApplyCoupon,
-    removeCoupon: handleRemoveCoupon,
-    isInCart,
-    getItemQuantity,
+    isOpen,
+    isLoading,
+    itemCount: items.reduce((acc: number, item: any) => acc + item.quantity, 0),
+    summary: {
+      total,
+      discount,
+      subtotal,
+    },
+    addItem: (product: any, quantity: number = 1) => {
+      const productId = typeof product === 'string' ? product : product.id || product._id;
+      return addToCart({ productId, quantity });
+    },
+    removeItem: (itemId: string) => removeFromCart(itemId),
+    updateQuantity: (itemId: string, quantity: number) => updateQuantity({ itemId, quantity }),
+    clearCart: () => clearCartMutation(),
+    toggleCart: () => dispatch(toggleCart()),
+    closeCart: () => dispatch(closeCart()),
+    applyCoupon: (code: string) => applyCouponMutation(code),
+    isInCart: (productId: string) => items.some((item: any) => (item.product.id || item.product._id) === productId),
+    getItemQuantity: (productId: string) => items.find((item: any) => (item.product.id || item.product._id) === productId)?.quantity || 0,
   };
 };

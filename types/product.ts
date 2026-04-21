@@ -31,6 +31,7 @@ export interface ProductFilter {
   sortBy?: 'price_asc' | 'price_desc' | 'rating' | 'newest' | 'popular';
   page?: number;
   limit?: number;
+  showInactive?: boolean;
 }
 
 export interface ProductsResponse {

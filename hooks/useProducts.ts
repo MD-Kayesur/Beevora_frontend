@@ -1,54 +1,44 @@
-import { useCallback } from 'react';
-import { useAppDispatch, useAppSelector } from './useRedux';
-import { fetchProducts, fetchProductById, fetchFeaturedProducts, setFilters, clearFilters } from '@/store/slices/productSlice';
+import { useGetProductsQuery, useGetProductByIdQuery, useLazyGetProductByIdQuery, useCreateProductMutation, useUpdateProductMutation, useDeleteProductMutation } from '@/redux/features/product/productApi';
 import { ProductFilter } from '@/types/product';
+import { useState } from 'react';
 
-export const useProducts = () => {
-  const dispatch = useAppDispatch();
-  const { products, featuredProducts, selectedProduct, total, page, totalPages, isLoading, isLoadingDetail, error, filters } =
-    useAppSelector((state) => state.products);
+export const useProducts = (initialParams: ProductFilter = {}) => {
+  const [params, setParams] = useState<ProductFilter>(initialParams);
+  
+  const { 
+    data, 
+    isLoading, 
+    isFetching, 
+    error, 
+    refetch 
+  } = useGetProductsQuery(params);
 
-  const loadProducts = useCallback(
-    (params?: ProductFilter) => {
-      dispatch(fetchProducts(params));
-    },
-    [dispatch]
-  );
+  const [createProductMutation, { isLoading: isCreating }] = useCreateProductMutation();
+  const [updateProductMutation, { isLoading: isUpdating }] = useUpdateProductMutation();
+  const [deleteProductMutation, { isLoading: isDeleting }] = useDeleteProductMutation();
 
-  const loadProductById = useCallback(
-    (id: string) => {
-      dispatch(fetchProductById(id));
-    },
-    [dispatch]
-  );
-
-  const loadFeaturedProducts = useCallback(() => {
-    dispatch(fetchFeaturedProducts());
-  }, [dispatch]);
-
-  const updateFilters = (newFilters: ProductFilter) => {
-    dispatch(setFilters(newFilters));
-  };
-
-  const resetFilters = () => {
-    dispatch(clearFilters());
-  };
+  const [triggerGetProduct, { data: selectedProductData, isLoading: isLoadingDetail }] = useLazyGetProductByIdQuery();
 
   return {
-    products,
-    featuredProducts,
-    selectedProduct,
-    total,
-    page,
-    totalPages,
+    products: data?.products || [],
+    total: data?.total || 0,
+    page: data?.page || 1,
+    totalPages: data?.totalPages || 1,
+    selectedProduct: selectedProductData,
     isLoading,
     isLoadingDetail,
+    isFetching,
+    isCreating,
+    isUpdating,
+    isDeleting,
     error,
-    filters,
-    loadProducts,
-    loadProductById,
-    loadFeaturedProducts,
-    updateFilters,
-    resetFilters,
+    params,
+    setParams,
+    refetch,
+    // Operations
+    loadProductById: triggerGetProduct,
+    createProduct: createProductMutation,
+    updateProduct: updateProductMutation,
+    deleteProduct: deleteProductMutation,
   };
 };

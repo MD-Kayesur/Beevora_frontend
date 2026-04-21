@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { ShoppingCart, Search, Menu, X, Package, User, LogOut, LayoutDashboard, ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
 import { ROUTES } from '@/lib/constants';
@@ -9,10 +9,15 @@ import { Button } from '@/components/ui/Button';
 import { getInitials } from '@/lib/utils';
 
 export const Header = () => {
+  const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { itemCount, toggleCart } = useCart();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const navLinks = [
     { href: ROUTES.HOME, label: 'Home' },
@@ -67,55 +72,57 @@ export const Header = () => {
             </button>
 
             {/* User Menu */}
-            {isAuthenticated && user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center gap-2 p-1.5 pr-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
-                >
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black text-xs font-bold">
-                    {getInitials(user.name)}
-                  </div>
-                  <span className="text-sm text-white/80 hidden sm:block">{user.name.split(' ')[0]}</span>
-                  <ChevronDown className="h-4 w-4 text-white/50" />
-                </button>
-
-                {isUserMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-52 rounded-xl bg-[#0D1428] border border-white/10 shadow-2xl py-1 overflow-hidden">
-                    <Link href={isAdmin ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD}
-                      onClick={() => setIsUserMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-                      <LayoutDashboard className="h-4 w-4" />Dashboard
-                    </Link>
-                    <Link href={ROUTES.USER_ORDERS}
-                      onClick={() => setIsUserMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-                      <Package className="h-4 w-4" />My Orders
-                    </Link>
-                    <Link href={ROUTES.USER_PROFILE}
-                      onClick={() => setIsUserMenuOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
-                      <User className="h-4 w-4" />Profile
-                    </Link>
-                    <div className="border-t border-white/10 mt-1 pt-1">
-                      <button
-                        onClick={() => { logout(); setIsUserMenuOpen(false); }}
-                        className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors">
-                        <LogOut className="h-4 w-4" />Sign Out
-                      </button>
+            {mounted && (
+              isAuthenticated && user ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="flex items-center gap-2 p-1.5 pr-3 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black text-xs font-bold">
+                      {getInitials(user.name)}
                     </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link href={ROUTES.LOGIN}>
-                  <Button variant="ghost" size="sm">Login</Button>
-                </Link>
-                <Link href={ROUTES.REGISTER}>
-                  <Button size="sm">Register</Button>
-                </Link>
-              </div>
+                    <span className="text-sm text-white/80 hidden sm:block">{user.name.split(' ')[0]}</span>
+                    <ChevronDown className="h-4 w-4 text-white/50" />
+                  </button>
+
+                  {isUserMenuOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-52 rounded-xl bg-[#0D1428] border border-white/10 shadow-2xl py-1 overflow-hidden">
+                      <Link href={isAdmin ? ROUTES.ADMIN_DASHBOARD : ROUTES.USER_DASHBOARD}
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
+                        <LayoutDashboard className="h-4 w-4" />Dashboard
+                      </Link>
+                      <Link href={ROUTES.USER_ORDERS}
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
+                        <Package className="h-4 w-4" />My Orders
+                      </Link>
+                      <Link href={ROUTES.USER_PROFILE}
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors">
+                        <User className="h-4 w-4" />Profile
+                      </Link>
+                      <div className="border-t border-white/10 mt-1 pt-1">
+                        <button
+                          onClick={() => { logout(); setIsUserMenuOpen(false); }}
+                          className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors">
+                          <LogOut className="h-4 w-4" />Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Link href={ROUTES.LOGIN}>
+                    <Button variant="ghost" size="sm">Login</Button>
+                  </Link>
+                  <Link href={ROUTES.REGISTER}>
+                    <Button size="sm">Register</Button>
+                  </Link>
+                </div>
+              )
             )}
 
             {/* Mobile Menu Toggle */}
