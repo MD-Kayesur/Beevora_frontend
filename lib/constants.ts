@@ -22,6 +22,7 @@ export const ROUTES = {
   ADMIN_PRODUCTS: '/dashboard/admin/products',
   ADMIN_ORDERS: '/dashboard/admin/orders',
   ADMIN_USERS: '/dashboard/admin/users',
+  ABOUT: '/about',
 } as const;
 
 export const PRODUCT_CATEGORIES = [

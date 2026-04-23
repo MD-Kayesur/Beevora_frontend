@@ -47,6 +47,13 @@ export const Header = () => {
             >
               Home
             </Link>
+
+            <Link
+              href={ROUTES.ABOUT}
+              className="text-sm text-white/70 hover:text-white transition-colors font-medium"
+            >
+              About
+            </Link>
             
             <div className="relative group" 
               onMouseEnter={() => setIsProductsMenuOpen(true)}
@@ -179,6 +186,14 @@ export const Header = () => {
               className="flex items-center py-2.5 px-2 text-sm text-white/70 hover:text-white transition-colors"
             >
               Home
+            </Link>
+
+            <Link
+              href={ROUTES.ABOUT}
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center py-2.5 px-2 text-sm text-white/70 hover:text-white transition-colors"
+            >
+              About
             </Link>
             
             <div className="space-y-1">
