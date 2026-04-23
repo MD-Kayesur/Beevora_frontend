@@ -46,11 +46,11 @@ export default function CheckoutPage() {
 
       const orderPayload = {
         items: items.map((item: any) => ({
-          product: item.product.id || item.product._id,
-          quantity: item.quantity,
-          price: item.product.price
+          product: item?.product?.id || item?.product?._id,
+          quantity: item?.quantity,
+          price: item?.product?.price
         })),
-        totalAmount: summary.total,
+        totalAmount: summary?.total,
         shippingAddress: addressString,
         paymentStatus: paymentMethod === 'cash_on_delivery' ? 'pending' : 'paid'
       };

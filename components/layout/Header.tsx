@@ -69,13 +69,13 @@ export const Header = () => {
                       All Products
                     </Link>
                     <Link 
-                      href={`${ROUTES.PRODUCTS}?category=Clothing`}
+                      href="/products/clothing"
                       className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors border-t border-white/5"
                     >
                       Clothing
                     </Link>
                     <Link 
-                      href={`${ROUTES.PRODUCTS}?category=Honey`}
+                      href="/products/honey"
                       className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
                     >
                       Honey
@@ -194,14 +194,14 @@ export const Header = () => {
                   All Products
                 </Link>
                 <Link
-                  href={`${ROUTES.PRODUCTS}?category=Clothing`}
+                  href="/products/clothing"
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center py-2 px-2 text-xs text-white/50 hover:text-white transition-colors"
                 >
                   Clothing
                 </Link>
                 <Link
-                  href={`${ROUTES.PRODUCTS}?category=Honey`}
+                  href="/products/honey"
                   onClick={() => setIsMenuOpen(false)}
                   className="flex items-center py-2 px-2 text-xs text-white/50 hover:text-white transition-colors"
                 >

@@ -50,7 +50,7 @@ export const useCart = () => {
     toggleCart: () => dispatch(toggleCart()),
     closeCart: () => dispatch(closeCart()),
     applyCoupon: (code: string) => applyCouponMutation(code),
-    isInCart: (productId: string) => items.some((item: any) => (item.product.id || item.product._id) === productId),
-    getItemQuantity: (productId: string) => items.find((item: any) => (item.product.id || item.product._id) === productId)?.quantity || 0,
+    isInCart: (productId: string) => items.some((item: any) => (item?.product?.id || item?.product?._id) === productId),
+    getItemQuantity: (productId: string) => items.find((item: any) => (item?.product?.id || item?.product._id) === productId)?.quantity || 0,
   };
 };
