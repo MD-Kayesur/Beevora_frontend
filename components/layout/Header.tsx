@@ -12,6 +12,7 @@ export const Header = () => {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isProductsMenuOpen, setIsProductsMenuOpen] = useState(false);
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { itemCount, toggleCart } = useCart();
 
@@ -40,15 +41,49 @@ export const Header = () => {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-sm text-white/70 hover:text-white transition-colors font-medium"
+            <Link
+              href={ROUTES.HOME}
+              className="text-sm text-white/70 hover:text-white transition-colors font-medium"
+            >
+              Home
+            </Link>
+            
+            <div className="relative group" 
+              onMouseEnter={() => setIsProductsMenuOpen(true)}
+              onMouseLeave={() => setIsProductsMenuOpen(false)}
+            >
+              <button
+                className="flex items-center gap-1 text-sm text-white/70 hover:text-white transition-colors font-medium"
               >
-                {link.label}
-              </Link>
-            ))}
+                Products
+                <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isProductsMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isProductsMenuOpen && (
+                <div className="absolute left-0 top-full pt-2 w-48 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="rounded-xl bg-[#0D1428] border border-white/10 shadow-2xl py-1 overflow-hidden">
+                    <Link 
+                      href={ROUTES.PRODUCTS}
+                      className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      All Products
+                    </Link>
+                    <Link 
+                      href={`${ROUTES.PRODUCTS}?category=Clothing`}
+                      className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors border-t border-white/5"
+                    >
+                      Clothing
+                    </Link>
+                    <Link 
+                      href={`${ROUTES.PRODUCTS}?category=Honey`}
+                      className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
+                    >
+                      Honey
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Right Actions */}
@@ -137,17 +172,43 @@ export const Header = () => {
 
         {/* Mobile Nav */}
         {isMenuOpen && (
-          <div className="md:hidden py-3 border-t border-white/10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setIsMenuOpen(false)}
-                className="flex items-center py-2.5 px-2 text-sm text-white/70 hover:text-white transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="md:hidden py-3 border-t border-white/10 space-y-1">
+            <Link
+              href={ROUTES.HOME}
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center py-2.5 px-2 text-sm text-white/70 hover:text-white transition-colors"
+            >
+              Home
+            </Link>
+            
+            <div className="space-y-1">
+              <div className="flex items-center justify-between py-2.5 px-2 text-sm text-white/70">
+                <span>Products</span>
+              </div>
+              <div className="pl-4 space-y-1">
+                <Link
+                  href={ROUTES.PRODUCTS}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center py-2 px-2 text-xs text-white/50 hover:text-white transition-colors"
+                >
+                  All Products
+                </Link>
+                <Link
+                  href={`${ROUTES.PRODUCTS}?category=Clothing`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center py-2 px-2 text-xs text-white/50 hover:text-white transition-colors"
+                >
+                  Clothing
+                </Link>
+                <Link
+                  href={`${ROUTES.PRODUCTS}?category=Honey`}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center py-2 px-2 text-xs text-white/50 hover:text-white transition-colors"
+                >
+                  Honey
+                </Link>
+              </div>
+            </div>
           </div>
         )}
       </div>
