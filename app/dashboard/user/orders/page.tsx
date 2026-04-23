@@ -43,7 +43,6 @@ export default function UserOrdersPage() {
                   <p className="text-lg font-bold text-white">{formatPrice(order.totalAmount || order.total)}</p>
                 </div>
                 <Button 
-                  onPress={() => setSelectedOrder(order)} // Button uses onPress or catch event? UI Button check
                   onClick={() => setSelectedOrder(order)}
                   variant="secondary" 
                   size="sm" 
