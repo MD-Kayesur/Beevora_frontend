@@ -43,7 +43,6 @@ export default function UserOrdersPage() {
                   <p className="text-lg font-bold text-white">{formatPrice(order.totalAmount || order.total)}</p>
                 </div>
                 <Button 
-                  onPress={() => setSelectedOrder(order)} // Button uses onPress or catch event? UI Button check
                   onClick={() => setSelectedOrder(order)}
                   variant="secondary" 
                   size="sm" 
@@ -105,14 +104,14 @@ export default function UserOrdersPage() {
                   {selectedOrder.items.map((item: any, idx: number) => (
                     <div key={idx} className="flex items-center gap-4 p-3 rounded-xl bg-white/3 border border-white/5 hover:border-white/10 transition-colors">
                       <div className="relative h-14 w-14 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
-                        {item.product?.thumbnail && <Image src={item.product.thumbnail} alt={item.product.name} fill className="object-cover" />}
+                        {item.product?.thumbnail && <Image src={item?.product?.thumbnail} alt={item?.product?.name} fill className="object-cover" />}
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-bold text-white line-clamp-1">{item.product?.name || 'Product Details'}</p>
-                        <p className="text-xs text-white/40">{formatPrice(item.price)} × {item.quantity}</p>
+                        <p className="text-sm font-bold text-white line-clamp-1">{item?.product?.name || 'Product Details'}</p>
+                        <p className="text-xs text-white/40">{formatPrice(item?.price)} × {item?.quantity}</p>
                       </div>
                       <div className="text-right">
-                         <p className="text-sm font-bold text-amber-400">{formatPrice(item.price * item.quantity)}</p>
+                         <p className="text-sm font-bold text-amber-400">{formatPrice(item?.price * item?.quantity)}</p>
                       </div>
                     </div>
                   ))}
@@ -121,7 +120,7 @@ export default function UserOrdersPage() {
 
             <div className="mt-6 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 flex justify-between items-center">
                <span className="font-bold text-white">Total Amount Paid</span>
-               <span className="text-xl font-bold text-amber-400">{formatPrice(selectedOrder.totalAmount || selectedOrder.total)}</span>
+               <span className="text-xl font-bold text-amber-400">{formatPrice(selectedOrder?.totalAmount || selectedOrder?.total)}</span>
             </div>
           </div>
         )}

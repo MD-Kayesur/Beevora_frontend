@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { ArrowRight, ShoppingBag, Shield, Truck, Star, Zap, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/lib/constants';
+import { FeaturedSections } from '@/components/product/FeaturedSections';
+
 
 export const metadata: Metadata = {
   title: 'Beevora – Premium Business eCommerce',
@@ -79,6 +81,10 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Featured Products */}
+      <FeaturedSections />
+
 
       {/* Features Section */}
       <section className="px-4 sm:px-6 lg:px-8 py-20 max-w-7xl mx-auto">

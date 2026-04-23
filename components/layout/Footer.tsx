@@ -17,7 +17,7 @@ export const Footer = () => {
       { label: 'My Orders', href: ROUTES.USER_ORDERS },
     ],
     Company: [
-      { label: 'About', href: '#' },
+      { label: 'About', href: ROUTES.ABOUT },
       { label: 'Contact', href: '#' },
       { label: 'Privacy Policy', href: '#' },
       { label: 'Terms of Service', href: '#' },
