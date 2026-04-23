@@ -45,7 +45,7 @@ export default function CheckoutPage() {
       const addressString = `${shippingData.street}, City: ${shippingData.city}, Phone: ${shippingData.phone}`;
 
       const orderPayload = {
-        items: items.map(item => ({
+        items: items.map((item: any) => ({
           product: item.product.id || item.product._id,
           quantity: item.quantity,
           price: item.product.price
