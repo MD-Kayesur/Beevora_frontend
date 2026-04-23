@@ -57,24 +57,24 @@ export const CartDrawer = () => {
             items.map((item: any) => (
               <div key={item._id} className="flex gap-4 p-3 rounded-xl bg-white/3 border border-white/5 hover:border-white/10 transition-all">
                 <div className="relative h-20 w-20 rounded-lg overflow-hidden bg-white/5 flex-shrink-0">
-                  <Image src={item.product.thumbnail} alt={item.product.name} fill className="object-cover" />
+                  <Image src={item?.product?.thumbnail} alt={item?.product?.name} fill className="object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-white truncate">{item.product.name}</p>
-                  <p className="text-xs text-white/40 mb-2">{item.product.brand}</p>
+                  <p className="text-sm font-semibold text-white truncate">{item?.product?.name}</p>
+                  <p className="text-xs text-white/40 mb-2">{item?.product?.brand}</p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                        <button 
-                        onClick={() => updateQuantity(item._id, Math.max(1, item.quantity - 1))}
+                        onClick={() => updateQuantity(item._id, Math.max(1, item?.quantity - 1))}
                         className="w-6 h-6 rounded-md bg-white/5 border border-white/10 text-white/60 flex items-center justify-center hover:bg-white/10 transition-all text-xs"
                        >-</button>
-                       <span className="text-xs font-bold text-white w-4 text-center">{item.quantity}</span>
+                       <span className="text-xs font-bold text-white w-4 text-center">{item?.quantity}</span>
                        <button 
-                        onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                        onClick={() => updateQuantity(item._id, item?.quantity + 1)}
                         className="w-6 h-6 rounded-md bg-white/5 border border-white/10 text-white/60 flex items-center justify-center hover:bg-white/10 transition-all text-xs"
                        >+</button>
                     </div>
-                    <span className="text-sm font-bold text-amber-400">{formatPrice(item.product.price * item.quantity)}</span>
+                    <span className="text-sm font-bold text-amber-400">{formatPrice(item?.product?.price * item?.quantity)}</span>
                   </div>
                 </div>
                 <button 
@@ -116,7 +116,7 @@ export const CartDrawer = () => {
                 <span className="text-white/60 text-xs font-medium uppercase tracking-wider">Subtotal</span>
                 <span className="text-sm font-bold text-white">{formatPrice(subtotal)}</span>
               </div>
-              {summary.discount > 0 && (
+              {summary?.discount > 0 && (
                 <div className="flex items-center justify-between">
                   <span className="text-green-500 text-xs font-medium uppercase tracking-wider">Discount</span>
                   <span className="text-sm font-bold text-green-500">-{formatPrice(summary.discount)}</span>

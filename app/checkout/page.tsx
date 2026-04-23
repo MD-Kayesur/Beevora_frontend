@@ -60,14 +60,21 @@ export default function CheckoutPage() {
       if (response.success) {
         toast.success('Order placed successfully!');
         
-        // Generate Contact Links
+        // Generate Contact Links with safety
         const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801928294516';
         const tgUsername = process.env.NEXT_PUBLIC_TELEGRAM_USERNAME || 'beevora';
         const fbPage = process.env.NEXT_PUBLIC_MESSENGER_PAGE || 'beevora';
         const phone = process.env.NEXT_PUBLIC_PHONE_NUMBER || '+8801928294516';
 
-        const itemLine = items.map((item: any) => `- ${item.product.name} (x${item.quantity})`).join('%0A');
-        const messageText = `Hello Beevora! I just placed an order.%0A%0A*Order Details:*%0AOrder ID: ${response.data._id}%0AItems:%0A${itemLine}%0A%0A*Total:* ${formatPrice(summary.total)}%0A%0A*Address:* %0A${addressString}`;
+        const orderId = response?.data?._id || response?.data?.id || 'PENDING';
+        const orderTotal = summary?.total || 0;
+        const subtotalVal = summary?.subtotal || 0;
+        
+        const itemLines = (items || []).map((item: any) => 
+          `- ${item?.product?.name || 'Product'} (x${item?.quantity || 1})`
+        ).join('%0A');
+
+        const messageText = `Hello Beevora! I just placed an order.%0A%0A*Order Details:*%0AOrder ID: ${orderId}%0AItems:%0A${itemLines}%0A%0A*Total:* ${formatPrice(orderTotal)}%0A%0A*Address:* %0A${addressString}`;
         
         setContactLinks({
           whatsapp: `https://wa.me/${waNumber}?text=${messageText}`,
@@ -77,7 +84,11 @@ export default function CheckoutPage() {
         });
 
         // Clear Cart
-        await clearCart();
+        try {
+          await clearCart();
+        } catch (e) {
+          console.error("Cart clear error:", e);
+        }
         
         // Show contact modal and set confirmation step
         setIsModalOpen(true);
