@@ -14,8 +14,8 @@ export default function UserDashboardPage() {
   const orders = data?.data || [];
   const total = data?.meta?.total || 0;
 
-  const totalSpent = orders.reduce((acc, order) => acc + (order.total || 0), 0);
-  const inProgress = orders.filter((o) => ['pending', 'processing', 'shipped'].includes(o.status)).length;
+  const totalSpent = orders.reduce((acc:any, order:any) => acc + (order.total || 0), 0);
+  const inProgress = orders.filter((o:any) => ['pending', 'processing', 'shipped'].includes(o.status)).length;
   const recentOrders = orders.slice(0, 5);
 
   return (
