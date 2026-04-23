@@ -62,10 +62,10 @@ export default function CheckoutPage() {
         toast.success('Order placed successfully!');
         
         // Generate Contact Links with safety
-        const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801928294516';
+        const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '8801926360430';
         const tgUsername = process.env.NEXT_PUBLIC_TELEGRAM_USERNAME || 'beevora';
         const fbPage = process.env.NEXT_PUBLIC_MESSENGER_PAGE || 'beevora';
-        const phone = process.env.NEXT_PUBLIC_PHONE_NUMBER || '+8801928294516';
+        const phone = process.env.NEXT_PUBLIC_PHONE_NUMBER || '+8801926360430';
 
         const orderId = response?.data?._id || response?.data?.id || 'PENDING';
         const orderTotal = summary?.total || 0;

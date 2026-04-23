@@ -4,6 +4,7 @@ import '../styles/globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
+import { ChatWidget } from '@/components/layout/ChatWidget';
 import ReduxProvider from '@/context/ReduxProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CartDrawer />
           <main className="flex-1 page-gradient">{children}</main>
           <Footer />
+          <ChatWidget />
         </ReduxProvider>
       </body>
     </html>
