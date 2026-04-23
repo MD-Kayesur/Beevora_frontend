@@ -16,7 +16,6 @@ const KNOWLEDGE_BASE = [
 ];
 
 export const ChatWidget = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [showMessenger, setShowMessenger] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [inputText, setInputText] = useState('');
@@ -75,13 +74,13 @@ export const ChatWidget = () => {
 
   return (
     <div 
-      className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4"
+      className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Messenger Chat Box */}
       {showMessenger && (
-        <div className="w-[320px] sm:w-[380px] h-[500px] flex flex-col bg-[#0D1428] border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-300">
+        <div className="w-[320px] sm:w-[380px] h-[500px] flex flex-col bg-[#0D1428] border border-white/10 rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-300 mb-2">
           <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
@@ -89,7 +88,7 @@ export const ChatWidget = () => {
               </div>
               <div>
                 <h3 className="text-white font-bold">Beevora AI Support</h3>
-                <p className="text-blue-100 text-xs">Automated assistant</p>
+                <p className="text-blue-100 text-xs text-left">Automated assistant</p>
               </div>
             </div>
             <button onClick={() => setShowMessenger(false)} className="text-white/80 hover:text-white transition-colors">
@@ -106,7 +105,7 @@ export const ChatWidget = () => {
                 <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${
                   msg.sender === 'user' 
                     ? 'bg-blue-600 text-white rounded-br-none' 
-                    : 'bg-white/5 border border-white/10 text-white/80 rounded-bl-none'
+                    : 'bg-white/5 border border-white/10 text-white/80 rounded-bl-none text-left'
                 }`}>
                   {msg.text}
                 </div>
@@ -144,41 +143,40 @@ export const ChatWidget = () => {
         </div>
       )}
 
-      {/* Floating Buttons */}
-      <div className="flex flex-col gap-3 items-end">
-        {(hovered || isOpen) && (
-          <div className="flex flex-col gap-3 animate-in slide-in-from-bottom-2 fade-in duration-300 mb-2">
-            <a 
-              href={whatsappLink} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 group"
-            >
-              <span className="bg-white/90 text-[#07091A] text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Order via WhatsApp</span>
-              <div className="w-12 h-12 rounded-full bg-green-500 shadow-lg flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
-                <Phone className="h-6 w-6 text-white" />
-              </div>
-            </a>
+      {/* revealed buttons (on hover only) */}
+      <div className={`flex flex-col gap-3 items-end transition-all duration-300 ${hovered ? 'opacity-100 translate-y-0 translate-x-0' : 'opacity-0 translate-y-10 translate-x-5 pointer-events-none'}`}>
+          {/* WhatsApp */}
+          <a 
+            href={whatsappLink} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 group"
+          >
+            <span className="bg-white/90 text-[#07091A] text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Order via WhatsApp</span>
+            <div className="w-11 h-11 rounded-full bg-green-500 shadow-lg flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
+              <Phone className="h-5 w-5 text-white" />
+            </div>
+          </a>
 
-            <button 
-              onClick={() => { setShowMessenger(!showMessenger); setIsOpen(false); }}
-              className="flex items-center gap-3 group"
-            >
-              <span className="bg-white/90 text-[#07091A] text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Instant Help</span>
-              <div className="w-12 h-12 rounded-full bg-blue-600 shadow-lg flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
-                <MessageCircle className="h-6 w-6 text-white" />
-              </div>
-            </button>
-          </div>
-        )}
-
-        <button 
-          onClick={() => setIsOpen(!isOpen)}
-          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${isOpen ? 'bg-red-500 rotate-90' : 'bg-amber-500'}`}
-        >
-          {isOpen ? <X className="h-7 w-7 text-white" /> : <MessageSquare className="h-7 w-7 text-black" />}
-        </button>
+          {/* Instant Help button */}
+          <button 
+            onClick={() => setShowMessenger(!showMessenger)}
+            className="flex items-center gap-3 group"
+          >
+            <span className="bg-white/90 text-[#07091A] text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Instant Help</span>
+            <div className="w-11 h-11 rounded-full bg-blue-600 shadow-lg flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
+              <MessageCircle className="h-5 w-5 text-white" />
+            </div>
+          </button>
       </div>
+
+      {/* Main Floating Action Button */}
+      <button 
+        onClick={() => setShowMessenger(!showMessenger)}
+        className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${showMessenger ? 'bg-red-500 rotate-90 scale-110' : 'bg-amber-500 hover:scale-110'}`}
+      >
+        {showMessenger ? <X className="h-7 w-7 text-white" /> : <MessageSquare className="h-7 w-7 text-black" />}
+      </button>
     </div>
   );
 };
