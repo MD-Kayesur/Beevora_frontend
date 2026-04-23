@@ -66,11 +66,53 @@ export const productApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [{ type: "Product", id: "LIST" }],
     }),
+    getHoney: builder.query<ProductsResponse, ProductFilter | void>({
+      query: (params) => ({
+        url: "/honey",
+        method: "GET",
+        params: params || {},
+      }),
+      transformResponse: (response: any) => {
+        return {
+          products: (response.data || []).map((product: any) => ({
+            ...product,
+            id: product.id || product._id,
+          })),
+          total: response.meta?.total || 0,
+          page: response.meta?.page || 1,
+          limit: response.meta?.limit || 10,
+          totalPages: response.meta?.totalPages || 1,
+        };
+      },
+      providesTags: ["Product"],
+    }),
+    getClothing: builder.query<ProductsResponse, ProductFilter | void>({
+      query: (params) => ({
+        url: "/clothing",
+        method: "GET",
+        params: params || {},
+      }),
+      transformResponse: (response: any) => {
+        return {
+          products: (response.data || []).map((product: any) => ({
+            ...product,
+            id: product.id || product._id,
+          })),
+          total: response.meta?.total || 0,
+          page: response.meta?.page || 1,
+          limit: response.meta?.limit || 10,
+          totalPages: response.meta?.totalPages || 1,
+        };
+      },
+      providesTags: ["Product"],
+    }),
   }),
 });
 
 export const {
   useGetProductsQuery,
+  useGetHoneyQuery,
+  useGetClothingQuery,
   useGetProductByIdQuery,
   useLazyGetProductByIdQuery,
   useCreateProductMutation,

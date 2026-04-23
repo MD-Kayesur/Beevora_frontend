@@ -1,5 +1,5 @@
 'use client';
-import { useProducts } from '@/hooks/useProducts';
+import { useGetClothingQuery } from '@/redux/features/product/productApi';
 import { ProductList } from '@/components/product/ProductList';
 import { Spinner } from '@/components/ui/Spinner';
 import { Package, ArrowLeft } from 'lucide-react';
@@ -7,7 +7,8 @@ import Link from 'next/link';
 import { ROUTES } from '@/lib/constants';
 
 export default function ClothingPage() {
-  const { products, isLoading } = useProducts({ category: 'Clothing' });
+  const { data, isLoading } = useGetClothingQuery();
+  const products = data?.products || [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
