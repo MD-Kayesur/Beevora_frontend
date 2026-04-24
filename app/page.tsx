@@ -4,6 +4,7 @@ import { ArrowRight, ShoppingBag, Shield, Truck, Star, Zap, TrendingUp, Mail, Ph
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/lib/constants';
 import { FeaturedSections } from '@/components/product/FeaturedSections';
+import { ContactForm } from '@/components/contact/ContactForm';
 
 
 export const metadata: Metadata = {
@@ -159,23 +160,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="p-8 rounded-[32px] bg-[#0D1428] border border-white/10 shadow-2xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <h3 className="text-2xl font-bold text-white mb-6">Send a Message</h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <input type="text" placeholder="First Name" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500/50" />
-                </div>
-                <div className="space-y-2">
-                  <input type="text" placeholder="Last Name" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500/50" />
-                </div>
-              </div>
-              <input type="email" placeholder="Email Address" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500/50" />
-              <textarea rows={4} placeholder="Your Message" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-1 focus:ring-amber-500/50" />
-              <Button className="w-full py-6">Send Message</Button>
-            </div>
-          </div>
+          <ContactForm />
         </div>
       </section>
     </div>
