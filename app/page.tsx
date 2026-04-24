@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, ShoppingBag, Shield, Truck, Star, Zap, TrendingUp } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Shield, Truck, Star, Zap, TrendingUp, Mail, Phone, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { ROUTES } from '@/lib/constants';
 import { FeaturedSections } from '@/components/product/FeaturedSections';
+import { ContactForm } from '@/components/contact/ContactForm';
 
 
 export const metadata: Metadata = {
@@ -127,6 +128,39 @@ export default function HomePage() {
               Get Started Free
             </Button>
           </Link>
+        </div>
+      </section>
+      {/* Contact Section */}
+      <section id="contact" className="px-4 sm:px-6 lg:px-8 py-24 max-w-7xl mx-auto border-t border-white/5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <h2 className="text-4xl font-bold text-white mb-6">
+              Get in <span className="text-gradient">Touch</span>
+            </h2>
+            <p className="text-white/50 mb-10 leading-relaxed text-lg max-w-lg">
+              Have questions about our products or partnership opportunities? Our team is here to help you scale your business.
+            </p>
+            
+            <div className="space-y-6">
+              {[
+                { icon: Mail, label: 'Email Us', value: 'support@beevora.com' },
+                { icon: Phone, label: 'Call Us', value: '+880 1926-360430' },
+                { icon: MapPin, label: 'Visit Us', value: 'Dhaka, Bangladesh' },
+              ].map((item) => (
+                <div key={item.label} className="flex items-center gap-5 p-4 rounded-2xl bg-white/3 border border-white/5 hover:bg-white/5 transition-colors">
+                  <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
+                    <item.icon className="h-6 w-6 text-amber-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-white/40 uppercase tracking-widest mb-1">{item.label}</p>
+                    <p className="text-white font-medium">{item.value}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <ContactForm />
         </div>
       </section>
     </div>
