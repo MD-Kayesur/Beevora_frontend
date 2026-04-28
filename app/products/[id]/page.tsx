@@ -21,12 +21,10 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     setActiveImage(null);
-    if (!products.find((p) => p.id === id)) {
-      loadProductById(id);
-    }
-  }, [id, products, loadProductById]);
+    loadProductById(id);
+  }, [id, loadProductById]);
 
-  const product = products.find((p) => p.id === id) || (selectedProduct?.id === id ? selectedProduct : null);
+  const product = (selectedProduct?.id === id ? selectedProduct : null) || products.find((p) => p.id === id);
 
   if (isLoading || isLoadingDetail) {
     return (
