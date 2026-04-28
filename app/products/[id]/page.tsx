@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Star, ShoppingCart, Heart, Truck, Shield, ArrowLeft, Package, AlertCircle } from 'lucide-react';
@@ -17,7 +17,10 @@ export default function ProductDetailPage() {
   const { products, isLoading, loadProductById, selectedProduct, isLoadingDetail } = useProducts();
   const { addItem, isInCart, getItemQuantity } = useCart();
 
+  const [activeImage, setActiveImage] = useState<string | null>(null);
+
   useEffect(() => {
+    setActiveImage(null);
     if (!products.find((p) => p.id === id)) {
       loadProductById(id);
     }
@@ -49,6 +52,17 @@ export default function ProductDetailPage() {
   const inCart = isInCart(product.id);
   const cartQty = getItemQuantity(product.id);
 
+  const displayImages: string[] = [];
+  if (product.thumbnail) displayImages.push(product.thumbnail);
+  if (product.hoverImage && !displayImages.includes(product.hoverImage)) displayImages.push(product.hoverImage);
+  if (product.images && product.images.length > 0) {
+    product.images.forEach(img => {
+      if (!displayImages.includes(img)) displayImages.push(img);
+    });
+  }
+
+  const currentImage = activeImage || (displayImages.length > 0 ? displayImages[0] : '/images/placeholder.jpg');
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Breadcrumb */}
@@ -63,22 +77,40 @@ export default function ProductDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
         {/* Image Gallery */}
         <div className="space-y-4">
+          {/* Main Image */}
           <div className="relative aspect-square rounded-3xl overflow-hidden bg-white/5 border border-white/10 group">
             <Image 
-              src={product.thumbnail} 
+              src={currentImage} 
               alt={product.name} 
               fill 
-              className="object-cover group-hover:scale-110 transition-transform duration-700" 
+              className="object-cover transition-all duration-500" 
               priority
             />
             {product.originalPrice && product.originalPrice > product.price && (
-              <div className="absolute top-6 left-6">
+              <div className="absolute top-6 left-6 z-10">
                 <Badge variant="danger">
                   -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% OFF
                 </Badge>
               </div>
             )}
           </div>
+          
+          {/* Thumbnails */}
+          {displayImages.length > 1 && (
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              {displayImages.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveImage(img)}
+                  className={`relative w-20 h-20 flex-shrink-0 rounded-2xl overflow-hidden border-2 transition-all duration-300 ${
+                    currentImage === img ? 'border-amber-500 shadow-lg shadow-amber-500/20' : 'border-transparent opacity-60 hover:opacity-100 hover:border-white/20'
+                  }`}
+                >
+                  <Image src={img} alt={`${product.name} thumbnail ${idx + 1}`} fill className="object-cover" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Product Info */}

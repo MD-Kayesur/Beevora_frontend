@@ -9,6 +9,7 @@ export interface Product {
   brand: string;
   images: string[];
   thumbnail: string;
+  hoverImage?: string;
   rating: number;
   reviewCount: number;
   stock: number;

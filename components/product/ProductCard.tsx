@@ -22,13 +22,27 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     <div className="group relative rounded-2xl bg-[#0D1428] border border-white/10 overflow-hidden transition-all duration-300 hover:border-amber-500/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/5">
       {/* Image */}
       <Link href={ROUTES.PRODUCT_DETAIL(product?.id)}>
-        <div className="relative h-52 overflow-hidden bg-white/5">
-          <Image
-            src={product?.thumbnail || '/images/placeholder.jpg'}
-            alt={product?.name}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+        <div className="relative h-52 bg-white/5 [perspective:1000px]">
+          <div className="relative w-full h-full transition-transform duration-700 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
+            {/* Front Image */}
+            <div className="absolute inset-0 [backface-visibility:hidden]">
+              <Image
+                src={product?.thumbnail || '/images/placeholder.jpg'}
+                alt={product?.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+            {/* Back Image */}
+            <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden]">
+              <Image
+                src={product?.hoverImage || product?.images?.[1] || product?.images?.[0] || product?.thumbnail || '/images/placeholder.jpg'}
+                alt={`${product?.name} - Back`}
+                fill
+                className="object-cover"
+              />
+            </div>
+          </div>
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5">
             {discount && <Badge variant="danger">-{discount}%</Badge>}

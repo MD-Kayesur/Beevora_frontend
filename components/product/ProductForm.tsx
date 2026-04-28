@@ -21,9 +21,11 @@ export const ProductForm = ({ initialData, onSubmit, isLoading }: ProductFormPro
     stock: initialData?.stock?.toString() || '',
     description: initialData?.description || '',
     thumbnail: initialData?.thumbnail || '',
+    hoverImage: initialData?.hoverImage || '',
     sku: initialData?.sku || `BEE-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
     isActive: initialData?.isActive !== undefined ? initialData.isActive : true,
     isFeatured: initialData?.isFeatured !== undefined ? initialData.isFeatured : false,
+    imagesText: initialData?.images?.join(', ') || '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -40,12 +42,19 @@ export const ProductForm = ({ initialData, onSubmit, isLoading }: ProductFormPro
       return;
     }
 
+    const imagesArray = formData.imagesText
+      .split(',')
+      .map(url => url.trim())
+      .filter(url => url.length > 0);
+
     const payload = {
       ...formData,
       price: Number(formData.price),
       originalPrice: formData.originalPrice ? Number(formData.originalPrice) : undefined,
       stock: Number(formData.stock),
+      images: imagesArray.length > 0 ? imagesArray : [formData.thumbnail],
     };
+    delete (payload as any).imagesText;
 
     onSubmit(payload);
   };
@@ -163,13 +172,34 @@ export const ProductForm = ({ initialData, onSubmit, isLoading }: ProductFormPro
         </label>
       </div>
 
-      <Input
-        label="Thumbnail URL"
-        name="thumbnail"
-        value={formData.thumbnail}
-        onChange={handleChange}
-        placeholder="https://example.com/image.jpg"
-      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Input
+          label="Thumbnail URL"
+          name="thumbnail"
+          value={formData.thumbnail}
+          onChange={handleChange}
+          placeholder="https://example.com/front-image.jpg"
+        />
+        <Input
+          label="Hover Image URL (Optional)"
+          name="hoverImage"
+          value={formData.hoverImage}
+          onChange={handleChange}
+          placeholder="https://example.com/back-image.jpg"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <label className="text-xs font-bold text-white/40 uppercase ml-1">Additional Image URLs (Comma Separated)</label>
+        <textarea
+          name="imagesText"
+          value={formData.imagesText}
+          onChange={handleChange}
+          rows={2}
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-500/50 transition-colors resize-none"
+          placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"
+        />
+      </div>
 
       <div className="pt-4 flex gap-3">
         <Button type="submit" className="flex-1" isLoading={isLoading}>
