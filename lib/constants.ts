@@ -24,6 +24,7 @@ export const ROUTES = {
   ADMIN_USERS: '/dashboard/admin/users',
   ABOUT: '/about',
   PRIVACY_POLICY: '/privacy-policy',
+  TERMS_OF_SERVICE: '/terms',
 } as const;
 
 export const PRODUCT_CATEGORIES = [

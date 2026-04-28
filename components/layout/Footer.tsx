@@ -20,7 +20,7 @@ export const Footer = () => {
       { label: 'About', href: ROUTES.ABOUT },
       { label: 'Contact', href: '/#contact' },
       { label: 'Privacy Policy', href: ROUTES.PRIVACY_POLICY },
-      { label: 'Terms of Service', href: '#' },
+      { label: 'Terms of Service', href: ROUTES.TERMS_OF_SERVICE },
     ],
   };
 
