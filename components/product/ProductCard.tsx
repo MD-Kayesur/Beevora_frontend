@@ -30,7 +30,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 src={product?.thumbnail || '/images/placeholder.jpg'}
                 alt={product?.name}
                 fill
-                className="object-cover"
+                className="object-contain"
               />
             </div>
             {/* Back Image */}
@@ -39,7 +39,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                 src={product?.hoverImage || product?.images?.[1] || product?.images?.[0] || product?.thumbnail || '/images/placeholder.jpg'}
                 alt={`${product?.name} - Back`}
                 fill
-                className="object-cover"
+                className="object-contain"
               />
             </div>
           </div>

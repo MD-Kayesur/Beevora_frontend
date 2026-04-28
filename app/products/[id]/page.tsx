@@ -83,7 +83,7 @@ export default function ProductDetailPage() {
               src={currentImage} 
               alt={product.name} 
               fill 
-              className="object-cover transition-all duration-500" 
+              className="object-contain transition-all duration-500" 
               priority
             />
             {product.originalPrice && product.originalPrice > product.price && (
@@ -106,7 +106,7 @@ export default function ProductDetailPage() {
                     currentImage === img ? 'border-amber-500 shadow-lg shadow-amber-500/20' : 'border-transparent opacity-60 hover:opacity-100 hover:border-white/20'
                   }`}
                 >
-                  <Image src={img} alt={`${product.name} thumbnail ${idx + 1}`} fill className="object-cover" />
+                  <Image src={img} alt={`${product.name} thumbnail ${idx + 1}`} fill className="object-contain" />
                 </button>
               ))}
             </div>
