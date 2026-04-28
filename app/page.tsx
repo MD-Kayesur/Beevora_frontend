@@ -86,6 +86,94 @@ export default function HomePage() {
       {/* Featured Products */}
       <FeaturedSections />
 
+      {/* Why Choose Us Section */}
+      <section className="px-4 sm:px-6 lg:px-8 py-24 bg-white/2 border-y border-white/5 relative overflow-hidden">
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+          <div className="absolute -top-40 -right-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl opacity-50" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl opacity-50" />
+        </div>
+
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            {/* Left Content */}
+            <div className="lg:w-1/2 space-y-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-amber-500/20 bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-wider">
+                <Star className="h-3.5 w-3.5" />
+                <span>Our Promise</span>
+              </div>
+              
+              <h2 className="text-4xl sm:text-5xl font-bold text-white leading-tight">
+                Why <span className="text-gradient">Choose Us</span> for Your Needs?
+              </h2>
+              
+              <p className="text-lg text-white/60 leading-relaxed">
+                We are committed to providing the highest quality products. From 100% pure organic honey to premium clothing, every item in our store is carefully curated to meet the highest standards of excellence.
+              </p>
+
+              <div className="space-y-6 pt-4">
+                {[
+                  { title: '100% Authentic Products', desc: 'Sourced directly from trusted manufacturers and beekeepers.' },
+                  { title: 'Sustainable Practices', desc: 'Committed to environmentally friendly sourcing and packaging.' },
+                  { title: 'Dedicated Support', desc: 'Our team is always here to ensure your complete satisfaction.' }
+                ].map((item, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center mt-1">
+                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white mb-1">{item.title}</h4>
+                      <p className="text-white/50">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Images Grid */}
+            <div className="lg:w-1/2 w-full">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4 pt-12">
+                  <div className="relative h-64 rounded-3xl overflow-hidden border border-white/10 group">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+                    <img src="https://images.unsplash.com/photo-1587049352847-4d4b126a31fc?auto=format&fit=crop&q=80&w=600" alt="Pure Honey" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute bottom-4 left-4 right-4 z-20">
+                      <p className="text-white font-bold text-lg">Pure Honey</p>
+                      <p className="text-white/70 text-sm">Organically sourced</p>
+                    </div>
+                  </div>
+                  <div className="relative h-48 rounded-3xl overflow-hidden border border-white/10 group">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+                    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=600" alt="Premium Clothing" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute bottom-4 left-4 right-4 z-20">
+                      <p className="text-white font-bold text-lg">Premium Clothing</p>
+                      <p className="text-white/70 text-sm">Latest fashion trends</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="relative h-48 rounded-3xl overflow-hidden border border-white/10 group">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+                    <img src="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?auto=format&fit=crop&q=80&w=600" alt="Quality Assurance" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute bottom-4 left-4 right-4 z-20">
+                      <p className="text-white font-bold text-lg">Quality Assured</p>
+                      <p className="text-white/70 text-sm">Tested for excellence</p>
+                    </div>
+                  </div>
+                  <div className="relative h-64 rounded-3xl overflow-hidden border border-white/10 group">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10" />
+                    <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=600" alt="Fast Delivery" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute bottom-4 left-4 right-4 z-20">
+                      <p className="text-white font-bold text-lg">Global Shipping</p>
+                      <p className="text-white/70 text-sm">Fast and reliable</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section className="px-4 sm:px-6 lg:px-8 py-20 max-w-7xl mx-auto">
