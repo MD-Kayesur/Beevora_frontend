@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, MessageCircle, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useSocket } from '@/context/SocketProvider';
 
 // Auto-reply knowledge base
 const KNOWLEDGE_BASE = [
@@ -23,6 +24,7 @@ export const ChatWidget = () => {
     { text: 'Hello! 👋 Thanks for visiting Beevora. How can we help you today?', sender: 'bot' }
   ]);
   const [isTyping, setIsTyping] = useState(false);
+  const { socket, isConnected } = useSocket();
   
   const chatEndRef = useRef<HTMLDivElement>(null);
   const whatsappNumber = "+8801926360430";
@@ -36,6 +38,31 @@ export const ChatWidget = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+
+  // Socket listeners
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleIncomingMessage = (message: any) => {
+      // If the message is from a user, we only add it if it's not us (since we add ours locally for speed)
+      // Actually, to make it a true global chat, we'll clear the input and let the server broadcast handle the addition
+      // but to keep it feeling fast, we'll filter out our own broadcasted message if we already have it.
+      
+      setMessages(prev => {
+        // Check if message already exists (to prevent duplicates when io.emit sends back to sender)
+        const isDuplicate = prev.some(m => m.text === message.text && m.timestamp === message.timestamp && m.sender === message.sender);
+        if (isDuplicate) return prev;
+        return [...prev, message];
+      });
+      setIsTyping(false);
+    };
+
+    socket.on('chat-message', handleIncomingMessage);
+
+    return () => {
+      socket.off('chat-message', handleIncomingMessage);
+    };
+  }, [socket]);
 
   // Auto-focus input when messenger opens
   useEffect(() => {
@@ -51,25 +78,39 @@ export const ChatWidget = () => {
     if (e) e.preventDefault();
     if (!inputText.trim() || isTyping) return;
 
-    const userMessage = inputText.trim();
-    setMessages(prev => [...prev, { text: userMessage, sender: 'user' }]);
+    const userMessage = {
+      text: inputText.trim(),
+      sender: 'user',
+      userName: user?.name || 'Guest',
+      timestamp: new Date().toISOString(),
+    };
+
+    // Add user message to UI
+    setMessages(prev => [...prev, userMessage]);
+    
+    // Emit message to backend
+    if (isConnected) {
+      socket.emit('chat-message', userMessage);
+      setIsTyping(true);
+    } else {
+      // Fallback to local auto-reply if socket is disconnected
+      setIsTyping(true);
+      setTimeout(() => {
+        const lowerMessage = userMessage.text.toLowerCase();
+        const match = KNOWLEDGE_BASE.find(item => 
+          item.keywords.some(keyword => lowerMessage.includes(keyword))
+        );
+
+        const responseText = match 
+          ? match.response 
+          : "I'm having trouble connecting to my live server, but I'm still here to help! Could you please try again in a moment?";
+
+        setMessages(prev => [...prev, { text: responseText, sender: 'bot' }]);
+        setIsTyping(false);
+      }, 1000);
+    }
+
     setInputText('');
-    setIsTyping(true);
-
-    // Simulate auto-reply delay
-    setTimeout(() => {
-      const lowerMessage = userMessage.toLowerCase();
-      const match = KNOWLEDGE_BASE.find(item => 
-        item.keywords.some(keyword => lowerMessage.includes(keyword))
-      );
-
-      const responseText = match 
-        ? match.response 
-        : "I'm not sure I understand. Could you please rephrase, or would you like me to connect you with a live agent?";
-
-      setMessages(prev => [...prev, { text: responseText, sender: 'bot' }]);
-      setIsTyping(false);
-    }, 1000);
   };
 
   return (
@@ -88,7 +129,12 @@ export const ChatWidget = () => {
               </div>
               <div>
                 <h3 className="text-white font-bold">Beevora AI Support</h3>
-                <p className="text-blue-100 text-xs text-left">Automated assistant</p>
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`} />
+                  <p className="text-blue-100 text-[10px] text-left uppercase tracking-wider font-bold">
+                    {isConnected ? 'Online' : 'Offline'}
+                  </p>
+                </div>
               </div>
             </div>
             <button onClick={() => setShowMessenger(false)} className="text-white/80 hover:text-white transition-colors">
@@ -102,12 +148,19 @@ export const ChatWidget = () => {
                 key={index} 
                 className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${
-                  msg.sender === 'user' 
-                    ? 'bg-blue-600 text-white rounded-br-none' 
-                    : 'bg-white/5 border border-white/10 text-white/80 rounded-bl-none text-left'
-                }`}>
-                  {msg.text}
+                <div className="flex flex-col gap-1">
+                  {msg.sender === 'user' && (
+                    <span className={`text-[10px] font-bold opacity-50 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                      {msg.userName || 'Guest'}
+                    </span>
+                  )}
+                  <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${
+                    msg.sender === 'user' 
+                      ? 'bg-blue-600 text-white rounded-br-none' 
+                      : 'bg-white/5 border border-white/10 text-white/80 rounded-bl-none text-left'
+                  }`}>
+                    {msg.text}
+                  </div>
                 </div>
               </div>
             ))}

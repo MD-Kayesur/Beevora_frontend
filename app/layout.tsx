@@ -6,6 +6,7 @@ import { Footer } from '@/components/layout/Footer';
 import { CartDrawer } from '@/components/cart/CartDrawer';
 import { ChatWidget } from '@/components/layout/ChatWidget';
 import ReduxProvider from '@/context/ReduxProvider';
+import { SocketProvider } from '@/context/SocketProvider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -25,11 +26,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="min-h-screen flex flex-col bg-background text-foreground" suppressHydrationWarning>
         <ReduxProvider>
-          <Header />
-          <CartDrawer />
-          <main className="flex-1 page-gradient">{children}</main>
-          <Footer />
-          <ChatWidget />
+          <SocketProvider>
+            <Header />
+            <CartDrawer />
+            <main className="flex-1 page-gradient">{children}</main>
+            <Footer />
+            <ChatWidget />
+          </SocketProvider>
         </ReduxProvider>
       </body>
     </html>
