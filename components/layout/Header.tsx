@@ -8,6 +8,7 @@ import { ROUTES } from '@/lib/constants';
 import { Button } from '@/components/ui/Button';
 import { getInitials } from '@/lib/utils';
 import { useSocket } from '@/context/SocketProvider';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Activity } from 'lucide-react';
 
 export const Header = () => {
@@ -41,14 +42,7 @@ export const Header = () => {
               Bee<span className="text-amber-400">vora</span>
             </span>
             {mounted && (
-              <div className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-bold uppercase tracking-wider transition-all duration-500 ${
-                isConnected 
-                ? 'bg-green-500/10 border-green-500/20 text-green-400 shadow-[0_0_8px_rgba(34,197,94,0.2)]' 
-                : 'bg-red-500/10 border-red-500/20 text-red-400'
-              }`}>
-                <div className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`} />
-                {isConnected ? 'Live' : 'Offline'}
-              </div>
+              <StatusBadge isConnected={isConnected} />
             )}
           </Link>
 

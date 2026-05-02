@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, MessageCircle, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useSocket } from '@/context/SocketProvider';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 
 // Auto-reply knowledge base
 const KNOWLEDGE_BASE = [
@@ -129,12 +130,12 @@ export const ChatWidget = () => {
               </div>
               <div>
                 <h3 className="text-white font-bold">Beevora AI Support</h3>
-                <div className="flex items-center gap-1.5">
-                  <div className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`} />
-                  <p className="text-blue-100 text-[10px] text-left uppercase tracking-wider font-bold">
-                    {isConnected ? 'Online' : 'Offline'}
-                  </p>
-                </div>
+                <StatusBadge 
+                  isConnected={isConnected} 
+                  onlineLabel="Online" 
+                  offlineLabel="Offline" 
+                  className="!px-0 !py-0 !border-0 !bg-transparent !shadow-none"
+                />
               </div>
             </div>
             <button onClick={() => setShowMessenger(false)} className="text-white/80 hover:text-white transition-colors">
