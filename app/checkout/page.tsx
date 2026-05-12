@@ -12,6 +12,12 @@ import Link from 'next/link';
 import { ROUTES } from '@/lib/constants';
 import { formatPrice } from '@/lib/utils';
 import { toast } from 'react-hot-toast';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import { StripePaymentForm } from '@/components/checkout/StripePaymentForm';
+import { useCreatePaymentIntentMutation } from '@/redux/features/order/orderApi';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder');
 
 type Step = 'shipping' | 'payment' | 'confirmation';
 
@@ -21,6 +27,9 @@ export default function CheckoutPage() {
   const { items, summary, clearCart } = useCart();
   const { isAuthenticated } = useAuth();
   const [createOrder, { isLoading: isPlacingOrder }] = useCreateOrderMutation();
+  const [createPaymentIntent, { isLoading: isCreatingIntent }] = useCreatePaymentIntentMutation();
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [transactionId, setTransactionId] = useState<string | null>(null);
 
   const [shippingData, setShippingData] = useState({
     fullName: '', phone: '', street: '', city: '', state: '', zipCode: '', country: '',
@@ -34,7 +43,23 @@ export default function CheckoutPage() {
     call: ''
   });
 
-  const handleSubmit = async () => {
+  const handlePaymentStep = async () => {
+    if (paymentMethod === 'card' && !clientSecret) {
+      try {
+        const response = await createPaymentIntent({ amount: summary.total }).unwrap();
+        if (response.success) {
+          setClientSecret(response.data.clientSecret);
+          setStep('payment');
+        }
+      } catch (error: any) {
+        toast.error('Failed to initialize payment');
+      }
+    } else {
+      setStep('payment');
+    }
+  };
+
+  const handleSubmit = async (pIntentId?: string) => {
     if (!isAuthenticated) {
       toast.error('Please login to place an order');
       return;
@@ -53,7 +78,8 @@ export default function CheckoutPage() {
         })),
         totalAmount: summary?.total,
         shippingAddress: addressString,
-        paymentStatus: paymentMethod === 'cash_on_delivery' ? 'pending' : 'paid'
+        paymentStatus: paymentMethod === 'cash_on_delivery' ? 'pending' : 'paid',
+        transactionId: pIntentId || transactionId || undefined
       };
 
       const response = await createOrder(orderPayload).unwrap();
@@ -210,8 +236,14 @@ export default function CheckoutPage() {
                 <Input label="ZIP Code" value={shippingData.zipCode} onChange={(e) => setShippingData(p => ({ ...p, zipCode: e.target.value }))} placeholder="10001" />
                 <Input label="Country" value={shippingData.country} onChange={(e) => setShippingData(p => ({ ...p, country: e.target.value }))} placeholder="United States" />
               </div>
-              <Button className="w-full mt-4" size="lg" onClick={() => setStep('payment')}>
-                Continue to Payment
+              <Button 
+                className="w-full mt-4" 
+                size="lg" 
+                onClick={handlePaymentStep}
+                disabled={isCreatingIntent}
+                leftIcon={isCreatingIntent ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+              >
+                {isCreatingIntent ? 'Initializing...' : 'Continue to Payment'}
               </Button>
             </>
           )}
@@ -238,27 +270,35 @@ export default function CheckoutPage() {
                   </button>
                 ))}
               </div>
-              {paymentMethod === 'card' && (
-                <div className="space-y-3 pt-2">
-                  <Input label="Card Number" placeholder="1234 5678 9012 3456" />
-                  <div className="grid grid-cols-2 gap-3">
-                    <Input label="Expiry" placeholder="MM / YY" />
-                    <Input label="CVV" placeholder="•••" />
-                  </div>
+              {paymentMethod === 'card' && clientSecret && (
+                <div className="pt-4">
+                  <Elements stripe={stripePromise} options={{ clientSecret }}>
+                    <StripePaymentForm 
+                      clientSecret={clientSecret} 
+                      amount={summary.total}
+                      onSuccess={(id) => {
+                        setTransactionId(id);
+                        handleSubmit(id);
+                      }} 
+                    />
+                  </Elements>
                 </div>
               )}
-              <div className="flex gap-3 mt-4">
-                <Button variant="secondary" className="flex-1" onClick={() => setStep('shipping')} disabled={isPlacingOrder}>Back</Button>
-                <Button 
-                  className="flex-1" 
-                  size="lg" 
-                  onClick={handleSubmit} 
-                  disabled={isPlacingOrder || items.length === 0}
-                  leftIcon={isPlacingOrder ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                >
-                  {isPlacingOrder ? 'Processing...' : 'Place Order'}
-                </Button>
-              </div>
+
+              {paymentMethod !== 'card' && (
+                <div className="flex gap-3 mt-4">
+                  <Button variant="secondary" className="flex-1" onClick={() => setStep('shipping')} disabled={isPlacingOrder}>Back</Button>
+                  <Button 
+                    className="flex-1" 
+                    size="lg" 
+                    onClick={() => handleSubmit()} 
+                    disabled={isPlacingOrder || items.length === 0}
+                    leftIcon={isPlacingOrder ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+                  >
+                    {isPlacingOrder ? 'Processing...' : 'Place Order'}
+                  </Button>
+                </div>
+              )}
             </>
           )}
         </div>

@@ -10,6 +10,13 @@ export const orderApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Order", "Cart"],
     }),
+    createPaymentIntent: builder.mutation<{ success: boolean; data: { clientSecret: string } }, { amount: number }>({
+      query: (data) => ({
+        url: "/orders/create-payment-intent",
+        method: "POST",
+        body: data,
+      }),
+    }),
     getMyOrders: builder.query<any, any>({
       query: (params) => ({
         url: "/orders/my",
@@ -64,4 +71,5 @@ export const {
   useGetAllOrdersQuery,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
+  useCreatePaymentIntentMutation,
 } = orderApi;
