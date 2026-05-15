@@ -1,6 +1,7 @@
 'use client';
 import { ShoppingBag, DollarSign, Users, Package, TrendingUp, ArrowRight, Ticket, Plus, Trash2, Tag } from 'lucide-react';
 import { StatCard } from '@/components/dashboard/StatCard';
+import { AnalyticsCharts } from '@/components/dashboard/AnalyticsCharts';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -41,6 +42,8 @@ export default function AdminDashboardPage() {
   const totalCustomers = stats?.customers || 0;
   const totalProducts = stats?.products || 0;
   const recentOrdersList = stats?.recentOrders || [];
+  const salesTrend = stats?.salesTrend || [];
+  const categoryStats = stats?.categoryStats || [];
   const topProducts = stats?.topProducts || [];
 
   return (
@@ -56,6 +59,10 @@ export default function AdminDashboardPage() {
         <StatCard title="Total Customers" value={totalCustomers.toLocaleString()} icon={Users} change={15.3} color="green" isLoading={statsLoading} />
         <StatCard title="Products" value={totalProducts.toString()} icon={Package} change={3.1} color="purple" isLoading={statsLoading} />
       </div>
+
+      {!statsLoading && (
+        <AnalyticsCharts salesTrend={salesTrend} categoryStats={categoryStats} />
+      )}
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2">
