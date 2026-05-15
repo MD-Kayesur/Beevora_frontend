@@ -1,11 +1,11 @@
-'use client';
-import { Search, Eye, Trash2 } from 'lucide-react';
+import { Search, Eye, Trash2, FileText, Download } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { formatPrice, formatDate } from '@/lib/utils';
-import { ORDER_STATUS_COLORS } from '@/lib/constants';
+import { ORDER_STATUS_COLORS, API_BASE_URL, TOKEN_KEY } from '@/lib/constants';
 import { useState } from 'react';
 import { OrderStatus } from '@/types/order';
 import { useGetAllOrdersQuery, useUpdateOrderStatusMutation, useDeleteOrderMutation } from '@/redux/features/order/orderApi';
+import Cookies from 'js-cookie';
 
 export default function AdminOrdersPage() {
   const { data: ordersData, isLoading } = useGetAllOrdersQuery();
@@ -29,6 +29,34 @@ export default function AdminOrdersPage() {
 
   const handleStatusChange = (id: string, status: OrderStatus) => {
     updateStatus({ id, status });
+  };
+
+  const handleDownloadInvoice = async (id: string) => {
+    try {
+      const token = Cookies.get(TOKEN_KEY);
+      const response = await fetch(`${API_BASE_URL}/orders/${id}/invoice`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to download invoice');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `invoice_${id}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    } catch (err: any) {
+      alert(err.message || 'Failed to download invoice');
+    }
   };
 
   return (
@@ -89,6 +117,13 @@ export default function AdminOrdersPage() {
                   <td className="px-5 py-4 text-white/40 text-[11px]">{formatDate(order.createdAt)}</td>
                   <td className="px-5 py-4">
                     <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button 
+                        onClick={() => handleDownloadInvoice(order.id || order._id)} 
+                        title="Download Invoice"
+                        className="p-2 rounded-lg text-white/40 hover:text-amber-400 hover:bg-amber-500/10"
+                      >
+                        <FileText className="h-4 w-4" />
+                      </button>
                       <button onClick={() => handleDelete(order.id || order._id)} className="p-2 rounded-lg text-white/40 hover:text-red-400 hover:bg-red-500/10">
                         <Trash2 className="h-4 w-4" />
                       </button>

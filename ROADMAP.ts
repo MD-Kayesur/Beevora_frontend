@@ -8,37 +8,39 @@
  * @version 1.0.0
  */
 
-export const FutureFeatures = {
+export const CompletedFeatures = {
   // 1. DATA VISUALIZATION
   AnalyticsDashboard: {
     title: "Admin Analytics Dashboard",
-    tech: "Recharts / Chart.js",
+    tech: "Recharts",
+    status: "COMPLETED ✅",
     description: "Visual representation of sales data, user growth, and order trends.",
-    resumeBenefit: "Demonstrates data analysis and complex UI visualization skills."
   },
 
   // 2. DOCUMENT AUTOMATION
   PDFInvoicing: {
     title: "Automated PDF Invoices",
-    tech: "pdf-lib / puppeteer",
+    tech: "pdf-lib",
+    status: "COMPLETED ✅",
     description: "Server-side generation of branded invoices upon order completion.",
-    resumeBenefit: "Shows ability to handle file systems and background document processing."
-  },
-
-  // 3. REAL-TIME GEOSPATIAL
-  OrderTracking: {
-    title: "Live Order Tracking Map",
-    tech: "Socket.io + Leaflet/Google Maps API",
-    description: "Real-time visual tracking of delivery progress for users.",
-    resumeBenefit: "Showcases advanced WebSocket usage and third-party API integration."
   },
 
   // 4. ADVANCED ECOMMERCE LOGIC
   CouponSystem: {
     title: "Dynamic Promo Code System",
     tech: "Custom Backend Logic",
+    status: "COMPLETED ✅",
     description: "Create and manage discount codes with expiry dates and usage limits.",
-    resumeBenefit: "Demonstrates complex business logic and database architecture."
+  },
+};
+
+export const FutureFeatures = {
+  // 3. REAL-TIME GEOSPATIAL
+  OrderTracking: {
+    title: "Live Order Tracking Map",
+    tech: "Socket.io + Leaflet/Google Maps API",
+    description: "Real-time visual tracking of delivery progress for users.",
+    resumeBenefit: "Showcases advanced WebSocket usage and third-party API integration."
   },
 
   // 5. USER ENGAGEMENT
