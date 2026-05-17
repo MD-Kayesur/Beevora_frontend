@@ -32,6 +32,14 @@ export const CompletedFeatures = {
     status: "COMPLETED ✅",
     description: "Create and manage discount codes with expiry dates and usage limits.",
   },
+
+  // 5. USER ENGAGEMENT
+  ReviewSystem: {
+    title: "Verified Purchase Reviews",
+    tech: "Cloudinary (Image Uploads) + Star Ratings",
+    status: "COMPLETED ✅",
+    description: "Allow customers to upload photos and review products they bought.",
+  },
 };
 
 export const FutureFeatures = {
@@ -41,14 +49,6 @@ export const FutureFeatures = {
     tech: "Socket.io + Leaflet/Google Maps API",
     description: "Real-time visual tracking of delivery progress for users.",
     resumeBenefit: "Showcases advanced WebSocket usage and third-party API integration."
-  },
-
-  // 5. USER ENGAGEMENT
-  ReviewSystem: {
-    title: "Verified Purchase Reviews",
-    tech: "Cloudinary (Image Uploads) + Star Ratings",
-    description: "Allow customers to upload photos and review products they bought.",
-    resumeBenefit: "Shows knowledge of social proofing and media handling."
   },
 
   // 6. SECURITY & ARCHITECTURE
