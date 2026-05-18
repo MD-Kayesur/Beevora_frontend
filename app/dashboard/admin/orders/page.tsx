@@ -1,3 +1,4 @@
+'use client';
 import { Search, Eye, Trash2, FileText, Download } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { formatPrice, formatDate } from '@/lib/utils';
@@ -8,7 +9,7 @@ import { useGetAllOrdersQuery, useUpdateOrderStatusMutation, useDeleteOrderMutat
 import Cookies from 'js-cookie';
 
 export default function AdminOrdersPage() {
-  const { data: ordersData, isLoading } = useGetAllOrdersQuery();
+  const { data: ordersData, isLoading } = useGetAllOrdersQuery(undefined);
   const [updateStatus] = useUpdateOrderStatusMutation();
   const [deleteOrder] = useDeleteOrderMutation();
   const [searchTerm, setSearchTerm] = useState('');

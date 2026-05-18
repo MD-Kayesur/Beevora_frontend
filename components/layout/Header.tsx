@@ -61,6 +61,13 @@ export const Header = () => {
             >
               About
             </Link>
+
+            <Link
+              href="/honey-quiz"
+              className="text-sm text-white/70 hover:text-white transition-colors font-medium"
+            >
+              Honey Quiz
+            </Link>
             
             <div className="relative group" 
               onMouseEnter={() => setIsProductsMenuOpen(true)}
@@ -201,6 +208,14 @@ export const Header = () => {
               className="flex items-center py-2.5 px-2 text-sm text-white/70 hover:text-white transition-colors"
             >
               About
+            </Link>
+
+            <Link
+              href="/honey-quiz"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center py-2.5 px-2 text-sm text-white/70 hover:text-white transition-colors"
+            >
+              Honey Quiz
             </Link>
             
             <div className="space-y-1">

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useGetAllUsersQuery, useUpdateUserMutation, useDeleteUserMutation } from '@/redux/features/user/userApi';
 
 export default function AdminUsersPage() {
-  const { data: usersData, isLoading } = useGetAllUsersQuery();
+  const { data: usersData, isLoading } = useGetAllUsersQuery(undefined);
   const [updateUser] = useUpdateUserMutation();
   const [deleteUser] = useDeleteUserMutation();
   const [searchTerm, setSearchTerm] = useState('');
