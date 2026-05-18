@@ -5,6 +5,14 @@ import { MessageSquare, X, Send, MessageCircle, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useSocket } from '@/context/SocketProvider';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { useAuth } from '@/hooks/useAuth';
+
+interface ChatMessage {
+  text: string;
+  sender: string;
+  userName?: string;
+  timestamp?: string;
+}
 
 // Auto-reply knowledge base
 const KNOWLEDGE_BASE = [
@@ -21,11 +29,12 @@ export const ChatWidget = () => {
   const [showMessenger, setShowMessenger] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [inputText, setInputText] = useState('');
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<ChatMessage[]>([
     { text: 'Hello! 👋 Thanks for visiting Beevora. How can we help you today?', sender: 'bot' }
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const { socket, isConnected } = useSocket();
+  const { user } = useAuth();
   
   const chatEndRef = useRef<HTMLDivElement>(null);
   const whatsappNumber = "+8801926360430";

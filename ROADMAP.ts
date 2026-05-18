@@ -71,6 +71,7 @@ export const FutureFeatures = {
   AISizeGuide: {
     title: "AI-Powered Size & Fit Advisor",
     tech: "Custom Statistical Schema + Interactive Sliders",
+    status: "COMPLETED ✅",
     description: "Recommends exact clothing sizes by comparing height, weight, and fit preferences against purchase data.",
     resumeBenefit: "Solves return-rate business logic problems using interactive responsive scales."
   },

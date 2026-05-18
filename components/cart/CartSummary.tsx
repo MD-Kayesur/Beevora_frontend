@@ -12,7 +12,10 @@ interface CartSummaryProps {
 
 export const CartSummary = ({ showCheckoutButton = true }: CartSummaryProps) => {
   const { summary, couponCode } = useCart();
-  const { subtotal, shipping, tax, discount, total } = summary;
+  const { subtotal, discount } = summary;
+  const shipping = subtotal >= SHIPPING_THRESHOLD || subtotal === 0 ? 0 : 10;
+  const tax = Math.round(subtotal * 0.08 * 100) / 100;
+  const total = subtotal + shipping + tax - discount;
   const freeShippingProgress = Math.min((subtotal / SHIPPING_THRESHOLD) * 100, 100);
 
   return (

@@ -153,7 +153,7 @@ export default function ProductsPage() {
       ) : error && products?.length === 0 ? (
         <div className="text-center py-20 p-8 rounded-2xl bg-red-500/5 border border-red-500/10">
           <p className="text-red-400 font-medium mb-4">{(error as any)?.message || (error as any)?.data?.message || 'Failed to load products. Please try again.'}</p>
-          <Button onClick={() => loadProducts(filters)}>Try Again</Button>
+          <Button onClick={() => loadProducts()}>Try Again</Button>
         </div>
       ) : products?.length === 0 ? (
         <div className="text-center py-20">

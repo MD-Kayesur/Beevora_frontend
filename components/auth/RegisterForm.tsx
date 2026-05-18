@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export const RegisterForm = () => {
-  const { register, isLoading, error, clearError, isAuthenticated, user } = useAuth();
+  const { register, isLoading, error, isAuthenticated, user } = useAuth();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -49,7 +49,6 @@ export const RegisterForm = () => {
     if (formErrors[name as keyof typeof formErrors]) {
       setFormErrors((prev) => ({ ...prev, [name]: undefined }));
     }
-    if (error) clearError();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
