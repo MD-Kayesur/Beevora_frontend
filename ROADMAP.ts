@@ -57,6 +57,38 @@ export const FutureFeatures = {
     tech: "Custom Auth Middleware",
     description: "Granular permissions for Admin, Manager, and Customer roles.",
     resumeBenefit: "Proves understanding of enterprise-level security standards."
+  },
+
+  // 7. USER INTERACTIVE & GAMIFICATION
+  HoneyPairingQuiz: {
+    title: "Interactive Honey Pairing & Wellness Wizard",
+    tech: "Framer Motion + Custom Scoring Algorithm",
+    description: "Multi-step gamified quiz recommending tailored honey types based on health goals and taste profiles.",
+    resumeBenefit: "Demonstrates creative UI design, high conversion UX, and algorithmic client-side scoring."
+  },
+
+  // 8. DATA-DRIVEN FASHION UX
+  AISizeGuide: {
+    title: "AI-Powered Size & Fit Advisor",
+    tech: "Custom Statistical Schema + Interactive Sliders",
+    description: "Recommends exact clothing sizes by comparing height, weight, and fit preferences against purchase data.",
+    resumeBenefit: "Solves return-rate business logic problems using interactive responsive scales."
+  },
+
+  // 9. SUPPLY CHAIN TRUST
+  BatchTraceability: {
+    title: "Honey Batch Traceability Timeline",
+    tech: "SVG Timelines + Leaflet Maps + Document Store",
+    description: "Enables customers to input batch codes to trace extraction dates, farm coordinates, and download purity PDFs.",
+    resumeBenefit: "Highlights outstanding story-driven branding and advanced metadata visualization."
+  },
+
+  // 10. RECURRING BILLING
+  RecurringSubscriptions: {
+    title: "Beevora Gold Auto-Delivery Club",
+    tech: "Stripe Subscriptions API + Node-Cron Workflows",
+    description: "Allows customers to subscribe and save on recurring bi-monthly or monthly organic honey shipments.",
+    resumeBenefit: "Proves understanding of subscription state machines, cron schedules, and Stripe webhooks."
   }
 };
 
