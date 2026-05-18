@@ -80,6 +80,7 @@ export const FutureFeatures = {
   BatchTraceability: {
     title: "Honey Batch Traceability Timeline",
     tech: "SVG Timelines + Leaflet Maps + Document Store",
+    status: "COMPLETED ✅",
     description: "Enables customers to input batch codes to trace extraction dates, farm coordinates, and download purity PDFs.",
     resumeBenefit: "Highlights outstanding story-driven branding and advanced metadata visualization."
   },

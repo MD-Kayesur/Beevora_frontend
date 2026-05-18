@@ -68,6 +68,13 @@ export const Header = () => {
             >
               Honey Quiz
             </Link>
+
+            <Link
+              href="/traceability"
+              className="text-sm text-white/70 hover:text-white transition-colors font-medium flex items-center gap-1"
+            >
+              <span>🔍</span> Trace Honey
+            </Link>
             
             <div className="relative group" 
               onMouseEnter={() => setIsProductsMenuOpen(true)}
@@ -216,6 +223,14 @@ export const Header = () => {
               className="flex items-center py-2.5 px-2 text-sm text-white/70 hover:text-white transition-colors"
             >
               Honey Quiz
+            </Link>
+
+            <Link
+              href="/traceability"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center py-2.5 px-2 text-sm text-white/70 hover:text-white transition-colors gap-1.5"
+            >
+              <span>🔍</span> Trace Honey
             </Link>
             
             <div className="space-y-1">
