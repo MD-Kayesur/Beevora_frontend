@@ -63,10 +63,16 @@ export default function AdminProductsPage() {
     setEditingProduct(null);
   };
 
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    p.category.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  const categories = ['All', ...Array.from(new Set((products || []).map(p => p.category).filter(Boolean)))];
+
+  const filteredProducts = (products || []).filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          p.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   const handleDelete = (id: string) => {
     if (confirm('Are you sure you want to delete this product?')) {
@@ -112,7 +118,7 @@ export default function AdminProductsPage() {
         />
       </Modal>
 
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
           <Input 
             placeholder="Search products by name or category..." 
@@ -120,6 +126,19 @@ export default function AdminProductsPage() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
+        </div>
+        <div className="sm:w-60">
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full h-[46px] bg-[#0D1428] text-white border border-white/10 rounded-xl px-4 text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all cursor-pointer hover:border-white/20"
+          >
+            {categories.map((category) => (
+              <option key={category} value={category} className="bg-[#0D1428] text-white">
+                {category === 'All' ? 'All Categories' : category}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
