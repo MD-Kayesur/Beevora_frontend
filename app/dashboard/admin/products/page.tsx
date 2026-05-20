@@ -15,13 +15,13 @@ import { StatCard } from '@/components/dashboard/StatCard';
 import { ActionDropdown } from '@/components/ui/ActionDropdown';
 
 export default function AdminProductsPage() {
-  const { 
-    products, 
-    isLoading, 
-    isCreating, 
-    isUpdating, 
-    createProduct, 
-    updateProduct, 
+  const {
+    products,
+    isLoading,
+    isCreating,
+    isUpdating,
+    createProduct,
+    updateProduct,
     deleteProduct,
     params,
     setParams
@@ -29,6 +29,7 @@ export default function AdminProductsPage() {
 
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
@@ -63,14 +64,12 @@ export default function AdminProductsPage() {
     setEditingProduct(null);
   };
 
-  const [selectedCategory, setSelectedCategory] = useState('All');
-
   const categories = ['All', ...Array.from(new Set((products || []).map(p => p.category).filter(Boolean)))];
 
   const filteredProducts = (products || []).filter(p => {
-    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           p.category.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'All' || p.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'All' || p.category.toLowerCase() === selectedCategory.toLowerCase();
     return matchesSearch && matchesCategory;
   });
 
@@ -92,7 +91,7 @@ export default function AdminProductsPage() {
           <h1 className="text-2xl font-bold text-white">Products Management</h1>
           <p className="text-white/50 mt-0.5">Create and manage your store catalog</p>
         </div>
-        <Button 
+        <Button
           leftIcon={<Plus className="h-4 w-4" />}
           onClick={() => setIsAddModalOpen(true)}
         >
@@ -111,27 +110,27 @@ export default function AdminProductsPage() {
         onClose={onModalClose}
         title={editingProduct ? 'Edit Product' : 'Add New Product'}
       >
-        <ProductForm 
-          initialData={editingProduct || undefined} 
-          onSubmit={handleAddProduct} 
-          isLoading={isCreating || isUpdating} 
+        <ProductForm
+          initialData={editingProduct || undefined}
+          onSubmit={handleAddProduct}
+          isLoading={isCreating || isUpdating}
         />
       </Modal>
 
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="flex-1">
-          <Input 
-            placeholder="Search products by name or category..." 
-            leftIcon={<Search className="h-4 w-4" />} 
+          <Input
+            placeholder="Search products by name or category..."
+            leftIcon={<Search className="h-4 w-4" />}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="sm:w-60">
+        <div className="sm:w-60 flex-shrink-0">
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full h-[46px] bg-[#0D1428] text-white border border-white/10 rounded-xl px-4 text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all cursor-pointer hover:border-white/20"
+            className="w-full h-[46px] bg-[#0D1428] text-white/80 border border-white/10 rounded-xl px-4 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all cursor-pointer hover:border-white/25 hover:bg-white/[0.02]"
           >
             {categories.map((category) => (
               <option key={category} value={category} className="bg-[#0D1428] text-white">
@@ -194,15 +193,15 @@ export default function AdminProductsPage() {
                         <div className="flex items-center gap-2">
                           <div className={cn(
                             "w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor]",
-                            product.stock === 0 ? "text-red-500 bg-red-500" : 
-                            product.stock < 10 ? "text-amber-500 bg-amber-500" : 
-                            "text-green-500 bg-green-500"
+                            product.stock === 0 ? "text-red-500 bg-red-500" :
+                              product.stock < 10 ? "text-amber-500 bg-amber-500" :
+                                "text-green-500 bg-green-500"
                           )} />
                           <span className={cn(
                             "text-[10px] font-bold uppercase tracking-wider",
-                            product.stock === 0 ? "text-red-400" : 
-                            product.stock < 10 ? "text-amber-400" : 
-                            "text-white/60"
+                            product.stock === 0 ? "text-red-400" :
+                              product.stock < 10 ? "text-amber-400" :
+                                "text-white/60"
                           )}>
                             {product.stock === 0 ? 'Out of Stock' : `${product.stock} Available`}
                           </span>
@@ -220,7 +219,7 @@ export default function AdminProductsPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <ActionDropdown 
+                      <ActionDropdown
                         actions={[
                           { label: 'View Page', icon: Eye, onClick: () => window.open(`/products/${product.id}`, '_blank') },
                           { label: 'Edit Details', icon: Edit2, onClick: () => handleEdit(product) },
