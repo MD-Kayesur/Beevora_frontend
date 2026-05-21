@@ -30,6 +30,8 @@ export default function AdminProductsPage() {
   const searchParams = useSearchParams();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedRating, setSelectedRating] = useState('All');
+  const [selectedPriceRange, setSelectedPriceRange] = useState('All');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
@@ -66,11 +68,30 @@ export default function AdminProductsPage() {
 
   const categories = ['All', ...Array.from(new Set((products || []).map(p => p.category).filter(Boolean)))];
 
+  const PRICE_RANGES = [
+    { label: 'All Prices',   value: 'All' },
+    { label: '$0 – $25',     value: '0-25' },
+    { label: '$25 – $50',    value: '25-50' },
+    { label: '$50 – $100',   value: '50-100' },
+    { label: '$100+',        value: '100-999999' },
+  ];
+
+  const RATING_OPTIONS = [
+    { label: 'All Ratings', value: 'All' },
+    { label: '4★ & above',  value: '4' },
+    { label: '3★ & above',  value: '3' },
+    { label: '2★ & above',  value: '2' },
+    { label: '1★ & above',  value: '1' },
+  ];
+
   const filteredProducts = (products || []).filter(p => {
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           p.category.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || p.category.toLowerCase() === selectedCategory.toLowerCase();
-    return matchesSearch && matchesCategory;
+    const matchesRating  = selectedRating === 'All' || p.rating >= parseFloat(selectedRating);
+    const [prMin, prMax] = selectedPriceRange === 'All' ? [0, Infinity] : selectedPriceRange.split('-').map(Number);
+    const matchesPrice   = p.price >= prMin && p.price <= prMax;
+    return matchesSearch && matchesCategory && matchesRating && matchesPrice;
   });
 
   const handleDelete = (id: string) => {
@@ -126,7 +147,7 @@ export default function AdminProductsPage() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="sm:w-60 flex-shrink-0">
+        <div className="sm:w-52 flex-shrink-0">
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -135,6 +156,32 @@ export default function AdminProductsPage() {
             {categories.map((category) => (
               <option key={category} value={category} className="bg-[#0D1428] text-white">
                 {category === 'All' ? 'All Categories' : category}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="sm:w-44 flex-shrink-0">
+          <select
+            value={selectedRating}
+            onChange={(e) => setSelectedRating(e.target.value)}
+            className="w-full h-[46px] bg-[#0D1428] text-white/80 border border-white/10 rounded-xl px-4 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all cursor-pointer hover:border-white/25 hover:bg-white/[0.02]"
+          >
+            {RATING_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value} className="bg-[#0D1428] text-white">
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="sm:w-44 flex-shrink-0">
+          <select
+            value={selectedPriceRange}
+            onChange={(e) => setSelectedPriceRange(e.target.value)}
+            className="w-full h-[46px] bg-[#0D1428] text-white/80 border border-white/10 rounded-xl px-4 text-xs font-bold focus:outline-none focus:ring-1 focus:ring-amber-500/50 focus:border-amber-500/50 transition-all cursor-pointer hover:border-white/25 hover:bg-white/[0.02]"
+          >
+            {PRICE_RANGES.map((opt) => (
+              <option key={opt.value} value={opt.value} className="bg-[#0D1428] text-white">
+                {opt.label}
               </option>
             ))}
           </select>
