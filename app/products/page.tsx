@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, Suspense } from 'react';
 import { Search, SlidersHorizontal, X, ChevronDown, Package } from 'lucide-react';
 import { ProductList } from '@/components/product/ProductList';
 import { Input } from '@/components/ui/Input';
@@ -9,8 +9,9 @@ import { Spinner } from '@/components/ui/Spinner';
 import { useProducts } from '@/hooks/useProducts';
 import { PRODUCT_CATEGORIES, SORT_OPTIONS } from '@/lib/constants';
 import { debounce } from '@/lib/utils';
+import { useSearchParams } from 'next/navigation';
 
-export default function ProductsPage() {
+function ProductsPageInner() {
   const { 
     products, 
     isLoading, 
@@ -27,6 +28,18 @@ export default function ProductsPage() {
   const resetFilters = () => {
     setParams({});
   };
+
+  const searchParamsHook = useSearchParams();
+  const urlCategory = searchParamsHook.get('category');
+
+  // Sync category from URL query param (when clicking from navbar)
+  useEffect(() => {
+    if (urlCategory) {
+      // The slug from url (e.g. "organic-honey") — match against product category by slug or name
+      setParams((prev: any) => ({ ...prev, category: urlCategory }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlCategory]);
 
   const [searchQuery, setSearchQuery] = useState(filters?.search || '');
   const [showFilters, setShowFilters] = useState(false);
@@ -174,5 +187,13 @@ export default function ProductsPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" /></div>}>
+      <ProductsPageInner />
+    </Suspense>
   );
 }
