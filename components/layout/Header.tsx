@@ -10,6 +10,7 @@ import { getInitials } from '@/lib/utils';
 import { useSocket } from '@/context/SocketProvider';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { Activity } from 'lucide-react';
+import { useGetCategoriesQuery } from '@/redux/features/category/categoryApi';
 
 export const Header = () => {
   const [mounted, setMounted] = useState(false);
@@ -19,6 +20,7 @@ export const Header = () => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
   const { itemCount, toggleCart } = useCart();
   const { isConnected } = useSocket();
+  const { data: categories = [] } = useGetCategoriesQuery();
 
   useEffect(() => {
     setMounted(true);
@@ -88,26 +90,24 @@ export const Header = () => {
               </button>
 
               {isProductsMenuOpen && (
-                <div className="absolute left-0 top-full pt-2 w-48 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="absolute left-0 top-full pt-2 w-52 animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="rounded-xl bg-[#0D1428] border border-white/10 shadow-2xl py-1 overflow-hidden">
-                    <Link 
+                    <Link
                       href={ROUTES.PRODUCTS}
                       className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
                     >
                       All Products
                     </Link>
-                    <Link 
-                      href="/products/clothing"
-                      className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors border-t border-white/5"
-                    >
-                      Clothing
-                    </Link>
-                    <Link 
-                      href="/products/honey"
-                      className="block px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
-                    >
-                      Honey
-                    </Link>
+                    {categories.filter(c => c.isActive).map((cat, i) => (
+                      <Link
+                        key={cat.id}
+                        href={`/products?category=${cat.slug}`}
+                        className={`flex items-center gap-2 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors ${i === 0 ? 'border-t border-white/5' : ''}`}
+                      >
+                        <span>{cat.icon}</span>
+                        {cat.name}
+                      </Link>
+                    ))}
                   </div>
                 </div>
               )}
@@ -245,20 +245,17 @@ export const Header = () => {
                 >
                   All Products
                 </Link>
-                <Link
-                  href="/products/clothing"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center py-2 px-2 text-xs text-white/50 hover:text-white transition-colors"
-                >
-                  Clothing
-                </Link>
-                <Link
-                  href="/products/honey"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="flex items-center py-2 px-2 text-xs text-white/50 hover:text-white transition-colors"
-                >
-                  Honey
-                </Link>
+                {categories.filter(c => c.isActive).map((cat) => (
+                  <Link
+                    key={cat.id}
+                    href={`/products?category=${cat.slug}`}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center gap-1.5 py-2 px-2 text-xs text-white/50 hover:text-white transition-colors"
+                  >
+                    <span>{cat.icon}</span>
+                    {cat.name}
+                  </Link>
+                ))}
               </div>
             </div>
           </div>
