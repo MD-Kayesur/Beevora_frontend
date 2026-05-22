@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef, Suspense } from 'react';
 import { Search, SlidersHorizontal, X, ChevronDown, Package } from 'lucide-react';
 import { ProductList } from '@/components/product/ProductList';
 import { Input } from '@/components/ui/Input';
@@ -9,8 +9,12 @@ import { Spinner } from '@/components/ui/Spinner';
 import { useProducts } from '@/hooks/useProducts';
 import { PRODUCT_CATEGORIES, SORT_OPTIONS } from '@/lib/constants';
 import { debounce } from '@/lib/utils';
+import { useSearchParams } from 'next/navigation';
 
-export default function ProductsPage() {
+function ProductsContent() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
+
   const { 
     products, 
     isLoading, 
@@ -18,7 +22,19 @@ export default function ProductsPage() {
     params: filters, 
     setParams, 
     refetch: loadProducts
-  } = useProducts();
+  } = useProducts(categoryParam ? { category: categoryParam } : {});
+
+  const lastCategoryParamRef = useRef(categoryParam);
+
+  useEffect(() => {
+    if (lastCategoryParamRef.current !== categoryParam) {
+      lastCategoryParamRef.current = categoryParam;
+      setParams((prev) => ({
+        ...prev,
+        category: categoryParam || undefined,
+      }));
+    }
+  }, [categoryParam, setParams]);
 
   const updateFilters = (newFilters: any) => {
     setParams({ ...filters, ...newFilters });
@@ -30,11 +46,6 @@ export default function ProductsPage() {
 
   const [searchQuery, setSearchQuery] = useState(filters?.search || '');
   const [showFilters, setShowFilters] = useState(false);
-
-  // Redundant with RTK Query automate-fetch
-  // useEffect(() => {
-  //   loadProducts(filters);
-  // }, [filters, loadProducts]);
 
   const handleSearchChange = useMemo(
     () => debounce((value: string) => {
@@ -50,8 +61,20 @@ export default function ProductsPage() {
   };
 
   const clearCategory = () => updateFilters({ category: undefined });
+  
+  const isCategorySelected = (cat: string) => {
+    if (!filters.category) return false;
+    const normFilter = filters.category.toLowerCase();
+    const normCat = cat.toLowerCase();
+    if (normFilter === normCat) return true;
+    if (normFilter === 'cloth' && normCat === 'clothing') return true;
+    if (normFilter === 'clothing' && normCat === 'cloth') return true;
+    return false;
+  };
+
   const onCategoryChange = (cat: string) => {
-    updateFilters({ category: filters.category === cat ? undefined : cat });
+    const isSelected = isCategorySelected(cat);
+    updateFilters({ category: isSelected ? undefined : cat });
   };
 
   const onSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -114,7 +137,7 @@ export default function ProductsPage() {
                 key={cat}
                 onClick={() => onCategoryChange(cat)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-all ${
-                  filters.category === cat
+                  isCategorySelected(cat)
                     ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
                     : 'bg-white/5 text-white/60 border-white/10 hover:border-white/30'
                 }`}
@@ -132,7 +155,7 @@ export default function ProductsPage() {
           <span className="text-sm text-white/40">Active filters:</span>
           {filters?.category && (
             <Badge variant="primary">
-              {filters?.category}
+              {filters.category.toLowerCase() === 'cloth' ? 'Clothing' : filters.category}
               <button onClick={clearCategory}><X className="h-3 w-3 ml-1" /></button>
             </Badge>
           )}
@@ -174,5 +197,17 @@ export default function ProductsPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center py-20">
+        <Spinner size="lg" />
+      </div>
+    }>
+      <ProductsContent />
+    </Suspense>
   );
 }

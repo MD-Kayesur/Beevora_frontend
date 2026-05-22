@@ -12,6 +12,7 @@ interface ChatMessage {
   sender: string;
   userName?: string;
   timestamp?: string;
+  senderId?: string;
 }
 
 // Auto-reply knowledge base
@@ -40,6 +41,14 @@ export const ChatWidget = () => {
   const whatsappNumber = "+8801926360430";
   const whatsappLink = `https://wa.me/${whatsappNumber.replace('+', '')}`;
 
+  const isOwnMessage = (msg: ChatMessage) => {
+    if (msg.sender === 'bot') return false;
+    if (msg.senderId) {
+      return msg.senderId === socket?.id;
+    }
+    return msg.sender === 'user';
+  };
+
   // Auto-scroll to bottom
   const scrollToBottom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -54,9 +63,11 @@ export const ChatWidget = () => {
     if (!socket) return;
 
     const handleIncomingMessage = (message: any) => {
-      // If the message is from a user, we only add it if it's not us (since we add ours locally for speed)
-      // Actually, to make it a true global chat, we'll clear the input and let the server broadcast handle the addition
-      // but to keep it feeling fast, we'll filter out our own broadcasted message if we already have it.
+      // If the message was sent by us, we already added it locally, so ignore the broadcasted version
+      if (message.senderId === socket?.id) {
+        setIsTyping(false);
+        return;
+      }
       
       setMessages(prev => {
         // Check if message already exists (to prevent duplicates when io.emit sends back to sender)
@@ -93,6 +104,7 @@ export const ChatWidget = () => {
       sender: 'user',
       userName: user?.name || 'Guest',
       timestamp: new Date().toISOString(),
+      senderId: socket?.id,
     };
 
     // Add user message to UI
@@ -153,27 +165,30 @@ export const ChatWidget = () => {
           </div>
           
           <div className="flex-1 p-4 overflow-y-auto space-y-4 bg-[#0A0F1E]/50">
-            {messages.map((msg, index) => (
-              <div 
-                key={index} 
-                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div className="flex flex-col gap-1">
-                  {msg.sender === 'user' && (
-                    <span className={`text-[10px] font-bold opacity-50 ${msg.sender === 'user' ? 'text-right' : 'text-left'}`}>
-                      {msg.userName || 'Guest'}
-                    </span>
-                  )}
-                  <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${
-                    msg.sender === 'user' 
-                      ? 'bg-blue-600 text-white rounded-br-none' 
-                      : 'bg-white/5 border border-white/10 text-white/80 rounded-bl-none text-left'
-                  }`}>
-                    {msg.text}
+            {messages.map((msg, index) => {
+              const isOwn = isOwnMessage(msg);
+              return (
+                <div 
+                  key={index} 
+                  className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className="flex flex-col gap-1">
+                    {msg.sender === 'user' && (
+                      <span className={`text-[10px] font-bold opacity-50 ${isOwn ? 'text-right' : 'text-left'}`}>
+                        {msg.userName || 'Guest'}
+                      </span>
+                    )}
+                    <div className={`max-w-[85%] p-3 rounded-2xl text-sm ${
+                      isOwn 
+                        ? 'bg-blue-600 text-white rounded-br-none' 
+                        : 'bg-white/5 border border-white/10 text-white/80 rounded-bl-none text-left'
+                    }`}>
+                      {msg.text}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
             {isTyping && (
               <div className="flex justify-start">
                 <div className="bg-white/5 border border-white/10 p-3 rounded-2xl rounded-bl-none">
