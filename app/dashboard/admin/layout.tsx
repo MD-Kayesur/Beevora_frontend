@@ -1,5 +1,5 @@
 'use client';
-import { LayoutDashboard, ShoppingBag, Package, Users, Plus, Tag } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Package, Users, Plus } from 'lucide-react';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { ROUTES } from '@/lib/constants';
 import AuthGuard from '@/middleware/authGuard';
@@ -8,7 +8,6 @@ const adminSidebarItems = [
   { icon: LayoutDashboard, label: 'Overview', href: ROUTES.ADMIN_DASHBOARD },
   { icon: Package, label: 'Products', href: ROUTES.ADMIN_PRODUCTS },
   { icon: Plus, label: 'Add Product', href: `${ROUTES.ADMIN_PRODUCTS}?action=new` },
-  { icon: Tag, label: 'Categories', href: ROUTES.ADMIN_CATEGORIES },
   { icon: ShoppingBag, label: 'Orders', href: ROUTES.ADMIN_ORDERS },
   { icon: Users, label: 'Users', href: ROUTES.ADMIN_USERS },
 ];

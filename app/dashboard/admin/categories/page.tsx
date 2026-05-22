@@ -109,9 +109,8 @@ export default function AdminCategoriesPage() {
               <button
                 key={emoji}
                 onClick={() => setIcon(emoji)}
-                className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center border transition-all ${
-                  icon === emoji ? 'border-amber-500 bg-amber-500/20' : 'border-white/10 bg-white/5 hover:border-white/20'
-                }`}
+                className={`w-10 h-10 rounded-xl text-xl flex items-center justify-center border transition-all ${icon === emoji ? 'border-amber-500 bg-amber-500/20' : 'border-white/10 bg-white/5 hover:border-white/20'
+                  }`}
               >
                 {emoji}
               </button>
