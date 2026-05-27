@@ -114,7 +114,7 @@ export default function HoneyQuizPage() {
     }
 
     // Find the actual product object from products list
-    const matched = honeys.find(p => p.name.toLowerCase().includes(targetProductName.toLowerCase()) || targetProductName.toLowerCase().includes(p.name.toLowerCase())) || honeys[0];
+    const matched = honeys?.find(p => p?.name?.toLowerCase()?.includes(targetProductName?.toLowerCase()) || targetProductName?.toLowerCase()?.includes(p?.name?.toLowerCase())) || honeys[0];
 
     setRecommendedProduct(matched);
     setMatchReason(reason);
